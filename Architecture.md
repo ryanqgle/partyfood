@@ -36,19 +36,27 @@ User Input (CLI)
    
 ### View and Edit Events
 
-Lists all of the events that exist and lets users choose to edit the events in the list
+Lets users do the following:
+- Add/remove diets
+- Add/remove intolerances
+- Add/remove available ingredients
+- Set/update attendee count
+- Generate recipes
+- Remove recipe
+- Go back
 
+Events should look like the [example outputs](#example-events)
+   
 ### Create New Event
 
    1. Enter # of attendees: `user input`.
    2. What ingredients does the user already have = (besides pantry items like salt, flour, water, etc.): `user input`.
    3. Prompts user to choose a diet from the [list of supported diets](README.md#supported-diets) or to go back.
-   4. Prompts user to choose any intolerances from the [list of supported intolerances].(README.md#supported-intolerances) or to go back.
+   4. Prompts user to choose any intolerances from the [list of supported intolerances](README.md#supported-intolerances) or to go back.
    
 ### Generate Recipes
 
-Generates recipes given the event, and event information. Output should look like the [example outputs](#example-events)
-
+Prompts the user to choose which event to generate recipes for, and generates recipes for it.
 ## External APIs
 
 ### Spoonacular
@@ -71,7 +79,7 @@ The local SQLite database stores **events** and their associated data.
 
 | Field | Type | Description |
 |---|---|---|
-| `id` | INTEGER (PK) | Auto-incremented event ID |
+| `id` | INTEGER (PRIORITY KEY) | Auto-incremented event ID |
 | `name` | TEXT | Name of the event (e.g. "Mia's 1st Birthday") |
 | `attendee_count` | INTEGER | Number of guests |
 
@@ -79,27 +87,27 @@ The local SQLite database stores **events** and their associated data.
 
 | Field | Type | Description |
 |---|---|---|
-| `event_id` | INTEGER (FK) | References `events.id` |
+| `event_id` | INTEGER (FOREIGN KEY) | References `events.id` |
 | `diet` | TEXT | Diet name (e.g. `"pescetarian"`, `"gluten-free"`) |
 
 ### `event_intolerances` table
 
 | Field | Type | Description |
 |---|---|---|
-| `event_id` | INTEGER (FK) | References `events.id` |
+| `event_id` | INTEGER (FOREIGN KEY) | References `events.id` |
 | `intolerance` | TEXT | Intolerance name (e.g. `"dairy"`, `"peanut"`) |
 
 ### `ingredients` table
 
 | Field | Type | Description |
 |---|---|---|
-| nothing yet
+| idk yet
 
 ### `event_recipes` table
 
 | Field | Type | Description |
 |---|---|---|
-| `event_id` | INTEGER (FK) | References `events.id` |
+| `event_id` | INTEGER (FOREIGN KEY) | References `events.id` |
 | `recipe_id` | TEXT | Spoonacular recipe ID |
 | `recipe_name` | TEXT | Display name |
 | `category` | TEXT | e.g. `"main"`, `"dessert"`, `"drink"` |
