@@ -32,7 +32,7 @@ User Input (CLI)
 3. Backend stores inputs and sends a `GET` request to the **Spoonacular API** with `diet`, `intolerances`, and ingredient parameters.
 4. Using Spoonacular results, backend sends a `GET` request to the **Kroger API** to fetch ingredient pricing.
 5. Backend normalizes and merges data, then displays categorized recipes with cost breakdowns.
-6. User may optionally save chosen recipes to the current event.
+6. User may optionally save chosen recipes and events.
    
 ### View and Edit Events
 
@@ -53,10 +53,13 @@ Events should look like the [example outputs](#example-events)
    2. What ingredients does the user already have = (besides pantry items like salt, flour, water, etc.): `user input`.
    3. Prompts user to choose a diet from the [list of supported diets](README.md#supported-diets) or to go back.
    4. Prompts user to choose any intolerances from the [list of supported intolerances](README.md#supported-intolerances) or to go back.
+
+Events should look like the [example outputs](#example-events)
    
 ### Generate Recipes
 
-Prompts the user to choose which event to generate recipes for, and generates recipes for it.
+Prompts the user to select an event to generate recipes for, then generates the recipe.
+
 ## External APIs
 
 ### Spoonacular
@@ -79,7 +82,7 @@ The local SQLite database stores **events** and their associated data.
 
 | Field | Type | Description |
 |---|---|---|
-| `id` | INTEGER (PRIORITY KEY) | Auto-incremented event ID |
+| `id` | INTEGER (PRIMARY KEY) | Auto-incremented event ID |
 | `name` | TEXT | Name of the event (e.g. "Mia's 1st Birthday") |
 | `attendee_count` | INTEGER | Number of guests |
 
