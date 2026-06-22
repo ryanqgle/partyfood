@@ -32,7 +32,7 @@ User Input (CLI)
 3. Backend stores inputs and sends a `GET` request to the **Spoonacular API** with `diet`, `intolerances`, and ingredient parameters.
 4. Using Spoonacular results, backend sends a `GET` request to the **Kroger API** to fetch ingredient pricing.
 5. Backend normalizes and merges data, then displays categorized recipes with cost breakdowns.
-6. User may optionally save chosen recipes to the current event.
+6. User may optionally save chosen recipes and events.
    
 ### View and Edit Events
 
@@ -44,10 +44,12 @@ Lists all of the events that exist and lets users choose to edit the events in t
    2. What ingredients does the user already have = (besides pantry items like salt, flour, water, etc.): `user input`.
    3. Prompts user to choose a diet from the [list of supported diets](README.md#supported-diets) or to go back.
    4. Prompts user to choose any intolerances from the [list of supported intolerances].(README.md#supported-intolerances) or to go back.
+
+Events should look like the [example outputs](#example-events)
    
 ### Generate Recipes
 
-Generates recipes given the event, and event information. Output should look like the [example outputs](#example-events)
+Generates recipes given the event, and event information.
 
 ## External APIs
 
@@ -71,7 +73,7 @@ The local SQLite database stores **events** and their associated data.
 
 | Field | Type | Description |
 |---|---|---|
-| `id` | INTEGER (PK) | Auto-incremented event ID |
+| `id` | INTEGER (PRIMARY KEY) | Auto-incremented event ID |
 | `name` | TEXT | Name of the event (e.g. "Mia's 1st Birthday") |
 | `attendee_count` | INTEGER | Number of guests |
 
@@ -79,14 +81,14 @@ The local SQLite database stores **events** and their associated data.
 
 | Field | Type | Description |
 |---|---|---|
-| `event_id` | INTEGER (FK) | References `events.id` |
+| `event_id` | INTEGER (FOREIGN KEY) | References `events.id` |
 | `diet` | TEXT | Diet name (e.g. `"pescetarian"`, `"gluten-free"`) |
 
 ### `event_intolerances` table
 
 | Field | Type | Description |
 |---|---|---|
-| `event_id` | INTEGER (FK) | References `events.id` |
+| `event_id` | INTEGER (FOREIGN KEY) | References `events.id` |
 | `intolerance` | TEXT | Intolerance name (e.g. `"dairy"`, `"peanut"`) |
 
 ### `ingredients` table
@@ -99,7 +101,7 @@ The local SQLite database stores **events** and their associated data.
 
 | Field | Type | Description |
 |---|---|---|
-| `event_id` | INTEGER (FK) | References `events.id` |
+| `event_id` | INTEGER (FOREIGN KEY) | References `events.id` |
 | `recipe_id` | TEXT | Spoonacular recipe ID |
 | `recipe_name` | TEXT | Display name |
 | `category` | TEXT | e.g. `"main"`, `"dessert"`, `"drink"` |
