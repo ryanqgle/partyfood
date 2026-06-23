@@ -10,7 +10,7 @@ class MenuItem:
         '''
         self.prompt_char = prompt_char
         self.title = title
-        self.func = func 
+        self.func = func
 
     def get_prompt_char(): return self.prompt_char
 
@@ -25,4 +25,4 @@ class MenuItem:
         if self.func:
             return self.func()
         else:
-            print (f"No action defined for {self.title}")
+            print(f"No action defined for {self.title}")
