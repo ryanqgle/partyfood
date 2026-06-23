@@ -69,6 +69,6 @@ class Event:
         self.ingredients.remove(ingredient)
 
     # attendees
-    def set_attendees(self, count):
+    def update_attendees(self, count):
         assert isinstance(count, int)
         self.attendee_count = count
