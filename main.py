@@ -23,29 +23,29 @@ def build_intolerance_menu(event, mode):
     # TODO: check how spoonful api takes these as args
     intolerance_options_dict = {
         "A": MenuItem("A", "Dairy",
-                        lambda: handler("dairy")),
+                      lambda: handler("dairy")),
         "B": MenuItem("B", "Egg",
-                        lambda: handler("egg")),
+                      lambda: handler("egg")),
         "C": MenuItem("C", "Gluten",
-                        lambda: handler("gluten")),
+                      lambda: handler("gluten")),
         "D": MenuItem("D", "Grain",
-                        lambda: handler("grain")),
+                      lambda: handler("grain")),
         "E": MenuItem("E", "Peanut",
-                        lambda: handler("peanut")),
+                      lambda: handler("peanut")),
         "F": MenuItem("F", "Seafood",
-                        lambda: handler("seafood")),
+                      lambda: handler("seafood")),
         "G": MenuItem("G", "Sesame",
-                        lambda: handler("sesame")),
-        "H": MenuItem("H", "Shellfish", 
-                        lambda: handler("shellfish")),
+                      lambda: handler("sesame")),
+        "H": MenuItem("H", "Shellfish",
+                      lambda: handler("shellfish")),
         "I": MenuItem("I", "Soy",
-                        lambda: handler("soy")),
+                      lambda: handler("soy")),
         "J": MenuItem("J", "Sulfite",
-                        lambda: handler("sulfite")),
+                      lambda: handler("sulfite")),
         "K": MenuItem("K", "Tree Nut",
-                        lambda: handler("tree nut")),
+                      lambda: handler("tree nut")),
         "L": MenuItem("L", "Wheat",
-                        lambda: handler("wheat"))
+                      lambda: handler("wheat"))
     }
     intolerance_menu = Menu("I", "Intolerances",
                             intolerance_options_dict)
@@ -67,27 +67,27 @@ def build_diets_menu(event, mode):
     # TODO: check how spoonful api takes these as args
     diet_options_dict = {
         "A": MenuItem("A", "Paleo",
-                        lambda: handler("paleo")),
+                      lambda: handler("paleo")),
         "B": MenuItem("B", "Low FODMAP",
-                        lambda: handler("low fodmap")),
+                      lambda: handler("low fodmap")),
         "C": MenuItem("C", "Pescetarian",
-                        lambda: handler("pescetarian")),
+                      lambda: handler("pescetarian")),
         "D": MenuItem("D", "Gluten Free",
-                        lambda: handler("gluten free")),
+                      lambda: handler("gluten free")),
         "E": MenuItem("E", "Keto | Ketogenic",
-                        lambda: handler("keto")),
+                      lambda: handler("keto")),
         "F": MenuItem("F", "Vegetarian",
-                        lambda: handler("vegetarian")),
+                      lambda: handler("vegetarian")),
         "G": MenuItem("G", "Lacto-Vegetarian",
-                        lambda: handler("lacto-vegetarian")),
+                      lambda: handler("lacto-vegetarian")),
         "H": MenuItem("H", "Ovo-Vegetarian",
-                        lambda: handler("ovo-vegetarian")),
+                      lambda: handler("ovo-vegetarian")),
         "I": MenuItem("I", "Vegan",
-                        lambda: handler("vegan")),
+                      lambda: handler("vegan")),
         "J": MenuItem("J", "Primal",
-                        lambda: handler("primal")),
+                      lambda: handler("primal")),
         "K": MenuItem("K", "Whole30",
-                        lambda: handler("whole30"))
+                      lambda: handler("whole30"))
     }
     diet_menu = Menu("D", "Diets", diet_options_dict)
     return diet_menu
@@ -98,13 +98,13 @@ def build_edit_event_menu(event):
     # build edit event menu
     edit_event_dict = {
         "A": MenuItem("A", "Add Diets",
-                        lambda: build_diets_menu(event, 0)),
+                      lambda: build_diets_menu(event, 0)),
         "B": MenuItem("B", "Remove Diets",
-                        lambda: build_diets_menu(event, 1)),
+                      lambda: build_diets_menu(event, 1)),
         "C": MenuItem("C", "Add Intolerances",
-                        lambda: build_intolerances_menu(event, 0)),
+                      lambda: build_intolerances_menu(event, 0)),
         "D": MenuItem("D", "Remove Intolerances",
-                        lambda: build_intolerances_menu(event, 1)),
+                      lambda: build_intolerances_menu(event, 1)),
         "E": MenuItem("E", "Add Ingredients", None),
         "F": MenuItem("F", "Remove Ingredients", None),
         "G": MenuItem("G", "Set Attendee Count", None),
@@ -116,7 +116,7 @@ def build_edit_event_menu(event):
 
 
 def build_single_event_menu(event):
-    # TODO: should be able to pass in which event we're modifying 
+    # TODO: should be able to pass in which event we're modifying
     # build event menu
     event_menu_dict = {
         "A": MenuItem("A", "List Info", None),
