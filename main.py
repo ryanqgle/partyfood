@@ -1,8 +1,17 @@
 import Menu
 import MenuItem
+import sqlalchemy as db
+import pandas as pd
 
 
 def main():
+    # Establish the database connection on app execution
+    # use this engine variable for functions requiring database access
+    engine = db.create_engine('sqlite:///food.db')
+    init_db(engine)
+    createEventChooserMenu(engine)
+
+    # Run as normal
     events = {}
     current_event = None
     print("partyfood: coming soon")
@@ -146,12 +155,35 @@ def build_main_menu():
         "C": MenuItem("C", "Generate Recipes", None)
     }
 
+# inits the database.
+# Intended to be used when the database/tables are not 
+def init_db(engine):
+    with open("storage/schema.sql", "r") as f:
+        schema = f.read()
 
-def createEventChooserMenu():
-    # TODO
+    raw_conn = engine.raw_connection()
+    try:
+        raw_conn.executescript(schema)
+        raw_conn.commit()
+    finally:
+        raw_conn.close()
+
+def createEventChooserMenu(engine):
     # This method should fetch the events from database and present
     # them as options in a menu
-    return
+
+    with engine.connect() as connection:
+        result = connection.execute(db.text("SELECT event_name FROM events;")).fetchall()
+
+        if not result:
+            print("No events found. Please create an event first")
+            return
+
+        events = [row[0] for row in result]
+
+        print("Select an event:")
+        for i, event in enumerate(events, 1):
+            print(f"  {i}. {event}")
 
 
 if __name__ == "__main__":
