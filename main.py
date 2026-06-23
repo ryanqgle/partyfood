@@ -123,7 +123,7 @@ def build_single_event_menu(event):
         "B": MenuItem("B", "View All Recipes", None),
         "C": MenuItem("C", "List Ingredients", None),
         "D": MenuItem("D", "View One Recipe", None),
-        "E": edit_event_menu
+        "E": build_edit_event_menu(event)
     }
     single_event_menu = Menu("M", "Event Menu", event_menu_dict)
     return single_event_menu

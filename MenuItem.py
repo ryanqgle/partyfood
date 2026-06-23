@@ -1,6 +1,6 @@
 class MenuItem:
 
-    def __init__(prompt_char, title, func):
+    def __init__(self, prompt_char, title, func):
         '''
         Initializes MenuItem
         Args:
@@ -12,16 +12,16 @@ class MenuItem:
         self.title = title
         self.func = func
 
-    def get_prompt_char(): return self.prompt_char
+    def get_prompt_char(self): return self.prompt_char
 
-    def display():
+    def display(self):
         '''
         To be used when displaying this item as an option
         under another menu
         '''
         print(f"[{self.prompt_char}] {self.title}")
 
-    def select():
+    def select(self):
         if self.func:
             return self.func()
         else:
