@@ -9,7 +9,6 @@ def main():
     # use this engine variable for functions requiring database access
     engine = db.create_engine('sqlite:///food.db')
     init_db(engine)
-    createEventChooserMenu(engine)
 
     # Run as normal
     events = {}
