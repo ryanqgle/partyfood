@@ -155,9 +155,10 @@ def build_main_menu():
         "C": MenuItem("C", "Generate Recipes", None)
     }
 
-# inits the database.
-# Intended to be used when the database/tables are not 
+
 def init_db(engine):
+    # inits the database.
+    # Intedned to be used when the database/tables are empty.
     with open("storage/schema.sql", "r") as f:
         schema = f.read()
 
@@ -168,12 +169,15 @@ def init_db(engine):
     finally:
         raw_conn.close()
 
+
 def createEventChooserMenu(engine):
     # This method should fetch the events from database and present
     # them as options in a menu
 
     with engine.connect() as connection:
-        result = connection.execute(db.text("SELECT event_name FROM events;")).fetchall()
+        result = connection.execute(
+            db.text("SELECT event_name FROM events;")
+        ).fetchall()
 
         if not result:
             print("No events found. Please create an event first")
