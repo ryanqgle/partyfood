@@ -3,52 +3,108 @@ import MenuItem
 
 
 def main():
+    events = {}
+    current_event = None
     print("partyfood: coming soon")
 
 
-def buildMenu():
-    # build intolerance menu
+def build_intolerance_menu(event, mode):
+    """
+    Args:
+        event: Event to be Modified
+        mode: Add (0) or Remove (1)
+    """
+    def handler(choice):
+        if mode == 0:
+            event.add_intolerance(choice)
+        else:
+            event.remove_intolerance(choice)
+
+    # TODO: check how spoonful api takes these as args
     intolerance_options_dict = {
-        "A": MenuItem("A", "Dairy", None),
-        "B": MenuItem("B", "Egg", None),
-        "C": MenuItem("C", "Gluten", None),
-        "D": MenuItem("D", "Grain", None),
-        "E": MenuItem("E", "Peanut", None),
-        "F": MenuItem("F", "Seafood", None),
-        "G": MenuItem("G", "Sesame", None),
-        "H": MenuItem("H", "Shellfish", None),
-        "I": MenuItem("I", "Soy", None),
-        "J": MenuItem("J", "Sulfite", None),
-        "K": MenuItem("K", "Tree Nut", None),
-        "L": MenuItem("L", "Wheat", None)
+        "A": MenuItem("A", "Dairy",
+                        lambda: handler("dairy")),
+        "B": MenuItem("B", "Egg",
+                        lambda: handler("egg")),
+        "C": MenuItem("C", "Gluten",
+                        lambda: handler("gluten")),
+        "D": MenuItem("D", "Grain",
+                        lambda: handler("grain")),
+        "E": MenuItem("E", "Peanut",
+                        lambda: handler("peanut")),
+        "F": MenuItem("F", "Seafood",
+                        lambda: handler("seafood")),
+        "G": MenuItem("G", "Sesame",
+                        lambda: handler("sesame")),
+        "H": MenuItem("H", "Shellfish", 
+                        lambda: handler("shellfish")),
+        "I": MenuItem("I", "Soy",
+                        lambda: handler("soy")),
+        "J": MenuItem("J", "Sulfite",
+                        lambda: handler("sulfite")),
+        "K": MenuItem("K", "Tree Nut",
+                        lambda: handler("tree nut")),
+        "L": MenuItem("L", "Wheat",
+                        lambda: handler("wheat"))
     }
     intolerance_menu = Menu("I", "Intolerances",
                             intolerance_options_dict)
-    # TODO: need to decide how to differentiate between remove & add
+    return intolerance_menu
 
-    # build diets menu
+
+def build_diets_menu(event, mode):
+    """
+    Args:
+        event: Event to be Modified
+        mode: Add (0) or Remove (1)
+    """
+    def handler(choice):
+        if mode == 0:
+            event.add_diet(choice)
+        else:
+            event.remove_diet(choice)
+
+    # TODO: check how spoonful api takes these as args
     diet_options_dict = {
-        "A": MenuItem("A", "Paleo", None),
-        "B": MenuItem("B", "Low FODMAP", None),
-        "C": MenuItem("C", "Pescetarian", None),
-        "D": MenuItem("D", "Gluten Free", None),
-        "E": MenuItem("E", "Keto | Ketogenic", None),
-        "F": MenuItem("F", "Vegetarian", None),
-        "G": MenuItem("G", "Lacto-Vegetarian", None),
-        "H": MenuItem("H", "Ovo-Vegetarian", None),
-        "I": MenuItem("I", "Vegan", None),
-        "J": MenuItem("J", "Primal", None),
-        "K": MenuItem("K", "Whole30", None)
+        "A": MenuItem("A", "Paleo",
+                        lambda: handler("paleo")),
+        "B": MenuItem("B", "Low FODMAP",
+                        lambda: handler("low fodmap")),
+        "C": MenuItem("C", "Pescetarian",
+                        lambda: handler("pescetarian")),
+        "D": MenuItem("D", "Gluten Free",
+                        lambda: handler("gluten free")),
+        "E": MenuItem("E", "Keto | Ketogenic",
+                        lambda: handler("keto")),
+        "F": MenuItem("F", "Vegetarian",
+                        lambda: handler("vegetarian")),
+        "G": MenuItem("G", "Lacto-Vegetarian",
+                        lambda: handler("lacto-vegetarian")),
+        "H": MenuItem("H", "Ovo-Vegetarian",
+                        lambda: handler("ovo-vegetarian")),
+        "I": MenuItem("I", "Vegan",
+                        lambda: handler("vegan")),
+        "J": MenuItem("J", "Primal",
+                        lambda: handler("primal")),
+        "K": MenuItem("K", "Whole30",
+                        lambda: handler("whole30"))
     }
     diet_menu = Menu("D", "Diets", diet_options_dict)
-    # TODO: need to decide how to differentiate between remove & add
+    return diet_menu
 
+
+def build_edit_event_menu(event):
+    # TODO: should be able to pass in which event we're modifying
     # build edit event menu
     edit_event_dict = {
-        "A": MenuItem("A", "Add Diets", None),
-        "B": MenuItem("B", "Remove Diets", None),
-        "C": MenuItem("C", "Add Intolerances", None),
-        "D": MenuItem("D", "Remove Intolerances", None),
+        "A": MenuItem("A", "Add Diets",
+                        lambda: build_diets_menu(event, 0)),
+        "B": MenuItem("B", "Remove Diets",
+                        lambda: build_diets_menu(event, 1)),
+        "C": MenuItem("C", "Add Intolerances",
+                        lambda: build_intolerances_menu(event, 0)),
+        "D": MenuItem("D", "Remove Intolerances",
+                        lambda: build_intolerances_menu(event, 1)),
         "E": MenuItem("E", "Add Ingredients", None),
         "F": MenuItem("F", "Remove Ingredients", None),
         "G": MenuItem("G", "Set Attendee Count", None),
@@ -56,7 +112,11 @@ def buildMenu():
         "I": MenuItem("I", "Remove Recipe", None)
     }
     edit_event_menu = Menu("E", "Edit Event", edit_event_dict)
+    return edit_event_menu
 
+
+def build_single_event_menu(event):
+    # TODO: should be able to pass in which event we're modifying 
     # build event menu
     event_menu_dict = {
         "A": MenuItem("A", "List Info", None),
@@ -65,18 +125,23 @@ def buildMenu():
         "D": MenuItem("D", "View One Recipe", None),
         "E": edit_event_menu
     }
-    event_menu = Menu("M", "Event Menu", event_menu_dict)
-    # TODO: need to decide how do it if listing the different events
+    single_event_menu = Menu("M", "Event Menu", event_menu_dict)
+    return single_event_menu
 
+
+def build_all_events_menu():
     all_events_dict = {
         "A": MenuItem("A", "List All Events", None),
         "B": MenuItem("B", "Choose Event", None)
     }
     all_events_menu = Menu("A", "View and Edit Events")
+    return all_events_menu
 
+
+def build_main_menu():
     # build main menu
     main_menu_dict = {
-        "A": all_events_menu,
+        "A": build_all_events_menu(),
         "B": MenuItem("B", "Create New Event", None),
         "C": MenuItem("C", "Generate Recipes", None)
     }
