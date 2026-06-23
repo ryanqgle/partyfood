@@ -18,15 +18,13 @@ def run_app():
     while current_menu:
         current_menu.display()
         choice = input("Select: ")
-        selected = current_menu.select(choice) #could be a menu or a function
-        
+        selected = current_menu.select(choice)  # could be a menu or a function
+
         if selected:
             result = selected.select()
 
             if isinstance(result, Menu):
-                current_menu = result #change to new menu
-            else:
-                current_menu = current_menu #stay in same menu
+                current_menu = result  # change to new menu
 
 
 def build_intolerance_menu(state, mode):
@@ -170,8 +168,8 @@ def build_all_events_menu(state):
 def build_main_menu(state):
     # build main menu
     main_menu_dict = {
-        "A": MenuItem("A", "View and Edit Events", 
-                     lambda: build_all_events_menu(state)),
+        "A": MenuItem("A", "View and Edit Events",
+                      lambda: build_all_events_menu(state)),
         "B": MenuItem("B", "Create New Event", None),
         "C": MenuItem("C", "Generate Recipes", None)
     }

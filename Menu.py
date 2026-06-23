@@ -19,15 +19,15 @@ class Menu:
         for item in self.options.values():
             item.display()
 
-
     def select(self, choice):
         """
         Prompts user to select from the options in the menu
         """
-        selected = self.options.get(choice) #makes sure the promptchar exists in our options
+        # makes sure the promptchar exists in our options
+        selected = self.options.get(choice)
 
         if selected:
             return selected
         else:
-            print ("Invalid choice")
+            print("Invalid choice")
             return None
