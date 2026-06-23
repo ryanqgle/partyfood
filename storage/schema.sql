@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS event_diets (
 -- If the event does not have any intolerances, then the intolerances attribute may be null.
 CREATE TABLE IF NOT EXISTS event_intolerances (
     event_id INTEGER REFERENCES events.id,
-    intolerances TEXT
+    intolerance TEXT
 );
 
 -- Table of ingredients that the user already has. May be null if the user has no ingredients.
