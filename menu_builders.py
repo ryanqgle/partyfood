@@ -126,8 +126,10 @@ def build_edit_event_menu(state):
         #               set_event_ingredients(state, 0)),
         # "F": MenuItem("F", "Remove Ingredients",
         #               set_event_ingredients(state, 1)),
-        "G": MenuItem("G", "Set Attendee Count", lambda: set_event_attendees(state)),
-        "H": MenuItem("H", "Generate Recipes", lambda: generate_recipes(state)),  # TODO
+        "G": MenuItem("G", "Set Attendee Count",
+                      lambda: set_event_attendees(state)),
+        "H": MenuItem("H", "Generate Recipes",
+                      lambda: generate_recipes(state)),
         # "I": MenuItem("I", "Remove Recipe", None)  # could be later
         "X": MenuItem("X", "Save Event",
                       lambda: build_single_event_menu(state))
@@ -136,7 +138,7 @@ def build_edit_event_menu(state):
 
 
 def build_single_event_menu(state):
-    """ 
+    """
     Builds the menu to view information for a single event.
 
     Args:
@@ -162,7 +164,7 @@ def build_single_event_menu(state):
 
 
 def build_all_events_menu(state):
-    """ 
+    """
     Builds the events menu.
 
     Args:

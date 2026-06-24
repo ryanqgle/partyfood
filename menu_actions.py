@@ -86,14 +86,14 @@ def generate_recipes(state):
         state: Global state
     """
     event = state.current_event
-    if event == None:
+    if event is None:
         print("No event selected.")
         return
 
     # GET https://api.spoonacular.com/recipes/complexSearch/
 
     # output should be a print statement of the recipes
-    
+
     main_url = event.generate_recipe_search_url(state, "main course")
     appetizer_url = event.generate_recipe_search_url(state, "appetizer")
     dessert_url = event.generate_recipe_search_url(state, "dessert")
@@ -131,7 +131,9 @@ def generate_recipes(state):
 
 
 def get_recipe_ingredients(state, recipeid):
-    url = f"https://api.spoonacular.com/recipes/{recipeid}/ingredientWidget.json?apiKey={state.spoonacular_key}"
+    url = (f"https://api.spoonacular.com/recipes/" +
+           f"{recipeid}/ingredientWidget.json?"
+           + f"apiKey={state.spoonacular_key}")
 
     response = requests.get(url)
     data = response.json()

@@ -32,9 +32,10 @@ class Event:
 
     def _rewrite_ingredients(self):
         # Replaces this event's ingredient rows with the current set.
-        # The ingredients table stores one comma-joined string per event, so the
-        # simplest correct update for an add or remove is to rewrite the row.
-        
+        # The ingredients table stores one comma-joined string per event,
+        # so the simplest correct update for an add or remove is to
+        # rewrite the row.
+
         if self.id is None or self.engine is None:
             return
         with self.engine.begin() as conn:
@@ -45,7 +46,7 @@ class Event:
             if self.ingredients:
                 conn.execute(
                     db.text(
-                        "INSERT INTO ingredients (event_id, event_ingredients) "
+                        "INSERT INTO ingredients (event_id, event_ingredients)"
                         "VALUES (:id, :ingredients)"
                     ),
                     {"id": self.id, "ingredients": ",".join(self.ingredients)},
@@ -159,13 +160,14 @@ class Event:
 
         if self.intolerances:
             params["intolerances"] = ",".join(self.intolerances)
-        
+
         if meal_type:
             params["type"] = meal_type
 
         params["number"] = 3  # we arbitrarily decide to only take 3 results
         params["apiKey"] = state.spoonacular_key
 
-        url = "https://api.spoonacular.com/recipes/complexSearch?" + urlencode(params)
+        url = ("https://api.spoonacular.com/recipes/complexSearch?" +
+               urlencode(params))
 
         return url
