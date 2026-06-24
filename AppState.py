@@ -2,7 +2,6 @@ from Menu import Menu
 from MenuItem import MenuItem
 from Event import Event
 import sqlalchemy as db
-import pandas as pd
 import os
 from dotenv import load_dotenv
 
@@ -60,11 +59,15 @@ class AppState:
                 event_name = row[1]
                 attendees = row[2]
 
-                event = Event(event_name, attendees)
+                event = Event(event_name, attendees, id=event_id)
 
                 self.load_diets(connection, event, event_id)
                 self.load_intolerances(connection, event, event_id)
                 self.load_ingredients(connection, event, event_id)
+
+                # attach the engine only after loading, so hydrating the
+                # event above doesn't re-write the rows we just read
+                event.engine = self.engine
 
                 self.events[event_id] = event
 

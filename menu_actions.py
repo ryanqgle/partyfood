@@ -4,6 +4,9 @@ import os
 from Recipe import Recipe
 
 
+import sqlalchemy as db
+
+
 def set_event_name(state):
     """
     Changes the name of the current_event
@@ -37,7 +40,7 @@ def set_event_ingredients(state, mode):
         mode: Add (0) or Remove (1)
     """
     ing_raw = input("Available ingredients (comma separated): ")
-    state.current_event.modify_ingredients(ing_raw)
+    state.current_event.modify_ingredients(ing_raw, mode)
 
 
 def view_recipes(state):
