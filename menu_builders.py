@@ -102,7 +102,14 @@ def build_diets_menu(state, mode, next_menu):
 
 
 def build_edit_event_menu(state):
-    """ Builds the menu to edit a single event. """
+    """
+    Builds the menu to edit a single event.
+
+    Args:
+        state: Global state
+
+    Returns a Menu.
+    """
     event = state.current_event
 
     menu = Menu("Edit Event", {})
@@ -115,12 +122,12 @@ def build_edit_event_menu(state):
                       lambda: build_intolerances_menu(state, 0, menu)),
         "D": MenuItem("D", "Remove Intolerances",
                       lambda: build_intolerances_menu(state, 1, menu)),
-        "E": MenuItem("E", "Add Ingredients",
-                      set_event_ingredients(state, 0)),
-        "F": MenuItem("F", "Remove Ingredients",
-                      set_event_ingredients(state, 1)),
-        "G": MenuItem("G", "Set Attendee Count", set_event_attendees(state)),
-        "H": MenuItem("H", "Generate Recipes", None),  # TODO
+        # "E": MenuItem("E", "Add Ingredients",
+        #               set_event_ingredients(state, 0)),
+        # "F": MenuItem("F", "Remove Ingredients",
+        #               set_event_ingredients(state, 1)),
+        "G": MenuItem("G", "Set Attendee Count", lambda: set_event_attendees(state)),
+        "H": MenuItem("H", "Generate Recipes", lambda: generate_recipes(state)),  # TODO
         # "I": MenuItem("I", "Remove Recipe", None)  # could be later
         "X": MenuItem("X", "Save Event",
                       lambda: build_single_event_menu(state))
@@ -129,7 +136,14 @@ def build_edit_event_menu(state):
 
 
 def build_single_event_menu(state):
-    """ Builds the menu to view information for a single event. """
+    """ 
+    Builds the menu to view information for a single event.
+
+    Args:
+        state: Global state
+
+    Returns a Menu.
+    """
     event = state.current_event
 
     event_menu_dict = {
@@ -143,12 +157,19 @@ def build_single_event_menu(state):
         "X": MenuItem("X", "Back to All Events",
                       lambda: build_all_events_menu(state))
     }
-    single_event_menu = Menu("Event Menu", event_menu_dict)
+    single_event_menu = Menu("Event", event_menu_dict)
     return single_event_menu
 
 
 def build_all_events_menu(state):
-    """ Builds the events menu. """
+    """ 
+    Builds the events menu.
+
+    Args:
+        state: Global state
+
+    Returns a Menu.
+    """
     all_events_dict = {
         "A": MenuItem("A", "List All Events",
                       lambda: list_all_events(state)),
@@ -168,7 +189,8 @@ def build_main_menu(state):
                       lambda: build_all_events_menu(state)),
         "B": MenuItem("B", "Create New Event",
                       lambda: build_create_event_menu(state)),
-        "C": MenuItem("C", "Generate Recipes", None)  # TODO
+        "C": MenuItem("C", "Generate Recipes", None)  # TODO also should prompt
+                                                      # with event selector
     }
     return Menu("Main", main_menu_dict)
 
@@ -176,6 +198,11 @@ def build_main_menu(state):
 def build_event_selector(state):
     """
     Builds a menu to select events
+
+    Args:
+        state: Global state
+
+    Returns a Menu.
     """
     def select(event):
         state.set_event_by_obj(event)
@@ -197,15 +224,20 @@ def build_event_selector(state):
 
 def build_create_event_menu(state):
     """
-    Builds the menu to create a new event
+    Builds the menu to create a new event.
+
+    Args:
+        state: Global state
+
+    Returns a Menu.
     """
     state.current_event = Event("New Event")
     menu = Menu("Options", {})
     menu.options = {
         "A": MenuItem("A", "Set Name",
                       lambda: set_event_name(state)),
-        "B": MenuItem("B", "Add Existing Ingredients",
-                      lambda: set_event_ingredients(state, 0)),
+        # "B": MenuItem("B", "Add Existing Ingredients",
+        #               lambda: set_event_ingredients(state, 0)),
         "C": MenuItem("C", "Add Diets",
                       lambda: build_diets_menu(state,
                                                0, lambda: menu)),
@@ -219,6 +251,9 @@ def build_create_event_menu(state):
     }
 
     def custom_display():
+        """
+        Customizes the display for an event creation menu.
+        """
         event = state.current_event
         print("==== Create Event ====")
         event.display()

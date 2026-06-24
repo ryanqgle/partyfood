@@ -3,6 +3,8 @@ from MenuItem import MenuItem
 from Event import Event
 import sqlalchemy as db
 import pandas as pd
+import os
+from dotenv import load_dotenv
 
 
 class AppState:
@@ -14,6 +16,9 @@ class AppState:
         self.current_event = None
         self.events = {}  # key: eventid from db, value: event obj
         self.engine = engine
+
+        load_dotenv(dotenv_path=".env", override=True)
+        self.spoonacular_key = os.getenv("SPOONACULAR_KEY")
 
     def set_event_by_obj(self, event):
         """

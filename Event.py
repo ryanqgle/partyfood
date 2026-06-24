@@ -1,3 +1,6 @@
+from urllib.parse import urlencode
+
+
 class Event:
 
     def __init__(self, name, attendee_count=0):
@@ -48,7 +51,7 @@ class Event:
     # diets
     def add_diet(self, diet):
         assert isinstance(diet, str)
-        self.diets.add(diet)
+        self.diets.add(diet.strip().lower())
         # TODO: update db
 
     def remove_diet(self, diet):
@@ -59,7 +62,7 @@ class Event:
     # intolerances
     def add_intolerance(self, intolerance):
         assert isinstance(intolerance, str)
-        self.intolerances.add(intolerance)
+        self.intolerances.add(intolerance.strip().lower())
         # TODO: update db
 
     def remove_intolerance(self, intolerance):
@@ -95,3 +98,22 @@ class Event:
         assert isinstance(count, int)
         self.attendee_count = count
         # TODO: update db
+
+    def generate_recipe_search_url(self, state, meal_type=""):
+        params = {}
+
+        if self.diets:
+            params["diet"] = ",".join(self.diets)
+
+        if self.intolerances:
+            params["intolerances"] = ",".join(self.intolerances)
+        
+        if meal_type:
+            params["type"] = meal_type
+
+        params["number"] = 3  # we arbitrarily decide to only take 3 results
+        params["apiKey"] = state.spoonacular_key
+
+        url = "https://api.spoonacular.com/recipes/complexSearch?" + urlencode(params)
+
+        return url
