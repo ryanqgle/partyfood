@@ -26,7 +26,7 @@ When planning a party, guests often have differing diets, allergies, and restric
 
 ## Quick Start
 
-See [Architecture](./ARCHITECTURE.md) for system design, data flow, and database schema.
+See [Architecture](./Architecture.md) for system design, data flow, and database schema.
 
 See [Setup](./Setup.md) for CLI walkthrough of how to set up this project and how to use it.
 
