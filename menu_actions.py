@@ -52,7 +52,7 @@ def view_recipes(state):
     """
     event = state.current_event
 
-    if not event.recipes:
+    if not event.saved_recipes:
         print("No saved recipes")
         return
 
@@ -60,7 +60,10 @@ def view_recipes(state):
     # and each recipe will have it's own display function
     # then we can loop through displays recipes here and display
     # FOR NOW, not a priority!!
-    return
+
+    for recipe in event.saved_recipes:
+        recipe.display()
+        print("")
 
 
 def list_all_events(state):
@@ -95,12 +98,12 @@ def generate_recipes(state):
     # output should be a print statement of the recipes
 
     main_url = event.generate_recipe_search_url(state, "main course")
-    appetizer_url = event.generate_recipe_search_url(state, "appetizer")
-    dessert_url = event.generate_recipe_search_url(state, "dessert")
+    # appetizer_url = event.generate_recipe_search_url(state, "appetizer")
+    # dessert_url = event.generate_recipe_search_url(state, "dessert")
     categories = {
         "main course": main_url,
-        "appetizer": appetizer_url,
-        "dessert": dessert_url,
+        # "appetizer": appetizer_url,
+        # "dessert": dessert_url,
     }
 
     recipes = {
@@ -111,23 +114,35 @@ def generate_recipes(state):
 
     for category, url in categories.items():
         response = requests.get(url)
+        if response.status_code != 200:
+            print(f"Failed to get recipes")
+            print("Status code: " + str(response.status_code))
+            return
+
         data = response.json()
         for recipe in data["results"]:
             rid = recipe["id"]
             ingreds = get_recipe_ingredients(state, rid)
             recipes[category][rid] = Recipe(recipe["title"], ingreds, rid)
 
-    print("!!! main course !!!")
+    print("!!! MAIN COURSES !!!")
     for recipe in recipes["main course"].values():
         recipe.display()
+    print("")
 
-    print("!!! appetizah !!!")
-    for recipe in recipes["appetizer"].values():
-        recipe.display()
+    # print("!!! APPETIZERS !!!")
+    # for recipe in recipes["appetizer"].values():
+    #     recipe.display()
+    # print("")
 
-    print("!!! dessert !!!")
-    for recipe in recipes["dessert"].values():
-        recipe.display()
+    # print("!!! DESSERTS !!!")
+    # for recipe in recipes["dessert"].values():
+    #     recipe.display()
+    # print("")
+
+    for category in recipes:
+        for recipe in recipes[category].values():
+            state.current_event.saved_recipes.add(recipe)
 
 
 def get_recipe_ingredients(state, recipeid):
@@ -136,8 +151,13 @@ def get_recipe_ingredients(state, recipeid):
            + f"apiKey={state.spoonacular_key}")
 
     response = requests.get(url)
-    data = response.json()
 
+    if response.status_code != 200:
+        print(f"Failed for recipe {recipeid}")
+        print("Status code: " + str(response.status_code))
+        return []
+
+    data = response.json()
     ingredients = []
 
     for ingredient in data["ingredients"]:

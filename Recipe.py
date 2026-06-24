@@ -10,4 +10,4 @@ class Recipe:
         print(self.name)
         print("Ingredients: ")
         for ingredient in self.ingredients:
-            print(ingredient)
+            print("- " + ingredient)

@@ -151,7 +151,8 @@ def build_single_event_menu(state):
     event_menu_dict = {
         "A": MenuItem("A", "List Info",
                       lambda: event.display()),
-        "B": MenuItem("B", "View All Recipes", None),  # TODO
+        "B": MenuItem("B", "View All Recipes",
+                      lambda: view_recipes(state)),  # TODO
         # "C": MenuItem("C", "List Ingredients", None),  # could be later
         # "D": MenuItem("D", "View One Recipe", None),  # could be later
         "E": MenuItem("E", "Edit Event",
