@@ -116,10 +116,11 @@ def build_edit_event_menu(state):
         "D": MenuItem("D", "Remove Intolerances",
                       lambda: build_intolerances_menu(state, 1, menu)),
         "E": MenuItem("E", "Add Ingredients",
-                      set_event_ingredients(state, 0)),
+                      lambda: set_event_ingredients(state, 0)),
         "F": MenuItem("F", "Remove Ingredients",
-                      set_event_ingredients(state, 1)),
-        "G": MenuItem("G", "Set Attendee Count", set_event_attendees(state)),
+                      lambda: set_event_ingredients(state, 1)),
+        "G": MenuItem("G", "Set Attendee Count", 
+                      lambda: set_event_attendees(state)),
         "H": MenuItem("H", "Generate Recipes", None),  # TODO
         # "I": MenuItem("I", "Remove Recipe", None)  # could be later
         "X": MenuItem("X", "Save Event",
