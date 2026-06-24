@@ -299,5 +299,53 @@ def set_event_ingredients(state, mode):
     state.current_event.modify_ingredients(ing_raw)
 
 
+def build_create_event_menu(state):
+    state.current_event = Event("New Event")
+    menu = Menu("Options", {})
+    menu.options = {
+        "A": MenuItem("A", "Set Name",
+                      lambda: set_event_name(state)),
+        "B": MenuItem("B", "Add Existing Ingredients",
+                      lambda: set_event_ingredients(state, 0)),
+        "C": MenuItem("C", "Add Diets",
+                      lambda: build_diets_menu(state,
+                                               0, lambda: menu)),
+        "D": MenuItem("D", "Add Intolerances",
+                      lambda: build_intolerances_menu(state,
+                                                      0, lambda: menu)),
+        "E": MenuItem("E", "Set Attendees",
+                      lambda: set_event_attendees(state)),
+        "X": MenuItem("X", "Save Event",
+                      lambda: build_main_menu(state))
+    }
+
+    def custom_display():
+        event = state.current_event
+        print("==== Create Event ====")
+        event.display()
+        for item in menu.options.values():
+            item.display()
+
+    menu.display = custom_display
+    return menu
+
+
+# FUNCTIONS TO RUN FOR OPTIONS
+
+def set_event_name(state):
+    name = input("Event Name: ")
+    state.current_event.set_name(name)
+
+
+def set_event_attendees(state):
+    count = int(input("Number of attendees: "))
+    state.current_event.update_attendees(count)
+
+
+def set_event_ingredients(state, mode):
+    ing_raw = input("Available ingredients (comma separated): ")
+    state.current_event.modify_ingredients(ing_raw)
+
+
 if __name__ == "__main__":
     main()
