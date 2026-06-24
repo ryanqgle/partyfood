@@ -2,7 +2,6 @@ from Menu import Menu
 from MenuItem import MenuItem
 from Event import Event
 import sqlalchemy as db
-import pandas as pd
 
 
 class AppState:
