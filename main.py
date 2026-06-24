@@ -36,6 +36,8 @@ def run_app(engine):
                 current_menu = result  # change to new menu
 
 
+# EVENT BUILDERS
+
 def build_intolerance_menu(state, mode, next_menu):
     """
     Args:
@@ -246,13 +248,11 @@ def build_create_event_menu(state):
     return menu
 
 
-# the functions to be used in the menus??
+# FUNCTIONS TO RUN FOR OPTIONS
 
 def set_event_name(state):
     name = input("Event Name: ")
-    state.current_event.name = name
-    # TODO: update db
-    # TODO: actually just move this to Event.py lol
+    state.current_event.set_name(name)
 
 def set_event_attendees(state):
     count = int(input("Number of attendees: "))
@@ -260,17 +260,7 @@ def set_event_attendees(state):
 
 def set_event_ingredients(state, mode):
     ingredients_raw = input("Available ingredients (comma separated): ")
-    ingredients = []
-    for i in ingredients_raw.split(","):
-        if i.strip():
-            ingredients.append(i.strip().lower())
-
-    for ingredient in ingredients:
-        if mode == 0:
-            state.current_event.add_ingredient(ingredient)
-        else:
-            state.current_event.remove_ingredient(ingredient)
-    # TODO: consider moving most of this to Event.py ?
+    state.current_event.modify_ingredients(ingredients_raw)
 
 
 

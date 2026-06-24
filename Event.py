@@ -41,6 +41,10 @@ class Event:
         )
         print(f"Saved Recipes: {saved_recipes_string}")
 
+    def set_name(self, name):
+        state.current_event.name = name
+        # TODO: update db
+
     # diets
     def add_diet(self, diet):
         assert isinstance(diet, str)
@@ -73,6 +77,18 @@ class Event:
         assert isinstance(ingredient, str)
         self.ingredients.remove(ingredient)
         # TODO: update db
+
+    def modify_ingredients(self, ingredients_raw):
+        ingredients = []
+        for i in ingredients_raw.split(","):
+            if i.strip():
+                ingredients.append(i.strip().lower())
+
+        for ingredient in ingredients:
+            if mode == 0:
+                state.current_event.add_ingredient(ingredient)
+            else:
+                state.current_event.remove_ingredient(ingredient)
 
     # attendees
     def update_attendees(self, count):
