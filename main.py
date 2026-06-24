@@ -18,6 +18,9 @@ def main():
 
 
 def run_app(engine):
+    """
+    Runs the CLI.
+    """
     state = AppState()
     state.set_current_event(Event("dummy", 10))
     state.set_engine(engine)
@@ -36,14 +39,30 @@ def run_app(engine):
                 current_menu = result  # change to new menu
 
 
+def init_db(engine):
+    # inits the database.
+    # Intended to be used when the database/tables are empty.
+    with open("storage/schema.sql", "r") as f:
+        schema = f.read()
+
+    raw_conn = engine.raw_connection()
+    try:
+        raw_conn.executescript(schema)
+        raw_conn.commit()
+    finally:
+        raw_conn.close()
+
+
 # EVENT BUILDERS
 
-def build_intolerance_menu(state, mode, next_menu):
+def build_intolerances_menu(state, mode, next_menu):
     """
+    Builds the menu to add / remove intolerances.
+
     Args:
-        event: Event to be Modified
+        state: Global state
         mode: Add (0) or Remove (1)
-        next_menu: the menu to go to after this one. should be a builder function like build_edit_event_menu(state)
+        next_menu: The menu to be sent to upon exit.
     """
     event = state.current_event
 
@@ -88,9 +107,12 @@ def build_intolerance_menu(state, mode, next_menu):
 
 def build_diets_menu(state, mode, next_menu):
     """
+    Builds the menu to add / remove diets.
+
     Args:
-        event: Event to be Modified
+        state: Global state
         mode: Add (0) or Remove (1)
+        next_menu: The menu to be sent to upon exit.
     """
     event = state.current_event
 
@@ -131,30 +153,30 @@ def build_diets_menu(state, mode, next_menu):
 
 
 def build_edit_event_menu(state):
-    # TODO: should be able to pass in which event we're modifying
-    # build edit event menu
+    """ Builds the menu to edit a single event. """
     event = state.current_event
 
-    edit_event_dict = {
+    menu = Menu("Edit Event", {})
+    edit_event_menu.options = {
         "A": MenuItem("A", "Add Diets",
-                      lambda: build_diets_menu(state, 0, build_edit_event_menu(state))),
+                      lambda: build_diets_menu(state, 0, menu)),
         "B": MenuItem("B", "Remove Diets",
-                      lambda: build_diets_menu(state, 1, build_edit_event_menu(state))),
+                      lambda: build_diets_menu(state, 1, menu)),
         "C": MenuItem("C", "Add Intolerances",
-                      lambda: build_intolerances_menu(state, 0, build_edit_event_menu(state))),
+                      lambda: build_intolerances_menu(state, 0, menu)),
         "D": MenuItem("D", "Remove Intolerances",
-                      lambda: build_intolerances_menu(state, 1, build_edit_event_menu(state))),
+                      lambda: build_intolerances_menu(state, 1, menu)),
         "E": MenuItem("E", "Add Ingredients", None),
         "F": MenuItem("F", "Remove Ingredients", None),
         "G": MenuItem("G", "Set Attendee Count", None),
         "H": MenuItem("H", "Generate Recipes", None),
         "I": MenuItem("I", "Remove Recipe", None)  # could be later
     }
-    edit_event_menu = Menu("Edit Event", edit_event_dict)
-    return edit_event_menu
+    return menu
 
 
 def build_single_event_menu(state):
+    """ Builds the menu to view information for a single event. """
     event = state.current_event
 
     event_menu_dict = {
@@ -171,9 +193,10 @@ def build_single_event_menu(state):
 
 
 def build_all_events_menu(state):
+    """ Builds the events menu. """
     all_events_dict = {
         "A": MenuItem("A", "List All Events", None),
-        "B": MenuItem("B", "Choose Event", 
+        "B": MenuItem("B", "Choose Event",
                       lambda: build_event_selector(state))
     }
     all_events_menu = Menu("View and Edit Events", all_events_dict)
@@ -181,28 +204,15 @@ def build_all_events_menu(state):
 
 
 def build_main_menu(state):
-    # build main menu
+    """ Builds the main menu. """
     main_menu_dict = {
         "A": MenuItem("A", "View and Edit Events",
                       lambda: build_all_events_menu(state)),
-        "B": MenuItem("B", "Create New Event", lambda: build_create_event_menu(state)),
+        "B": MenuItem("B", "Create New Event",
+                      lambda: build_create_event_menu(state)),
         "C": MenuItem("C", "Generate Recipes", None)
     }
     return Menu("Main Menu", main_menu_dict)
-
-
-def init_db(engine):
-    # inits the database.
-    # Intedned to be used when the database/tables are empty.
-    with open("storage/schema.sql", "r") as f:
-        schema = f.read()
-
-    raw_conn = engine.raw_connection()
-    try:
-        raw_conn.executescript(schema)
-        raw_conn.commit()
-    finally:
-        raw_conn.close()
 
 
 def build_event_selector(state):
@@ -225,16 +235,25 @@ def build_event_selector(state):
         for i, event in enumerate(events, 1):
             print(f"  {i}. {event}")
 
-def build_create_event_menu(state): 
+
+def build_create_event_menu(state):
     state.current_event = Event("New Event")
     menu = Menu("Options", {})
     menu.options = {
-        "A": MenuItem("A", "Set Name", lambda: set_event_name(state)),
-        "B": MenuItem("B", "Add Existing Ingredients", lambda: set_event_ingredients(state, 0)),
-        "C": MenuItem("C", "Add Diets",  lambda: build_diets_menu(state, 0, lambda: menu)),
-        "D": MenuItem("D", "Add Intolerances", lambda: build_intolerance_menu(state, 0, lambda: menu)),
-        "E": MenuItem("E", "Set Attendees", lambda: set_event_attendees(state)),
-        "X": MenuItem("X", "Save Event", lambda: build_main_menu(state))
+        "A": MenuItem("A", "Set Name",
+                      lambda: set_event_name(state)),
+        "B": MenuItem("B", "Add Existing Ingredients",
+                      lambda: set_event_ingredients(state, 0)),
+        "C": MenuItem("C", "Add Diets",
+                      lambda: build_diets_menu(state,
+                                               0, lambda: menu)),
+        "D": MenuItem("D", "Add Intolerances",
+                      lambda: build_intolerances_menu(state,
+                                                      0, lambda: menu)),
+        "E": MenuItem("E", "Set Attendees",
+                      lambda: set_event_attendees(state)),
+        "X": MenuItem("X", "Save Event",
+                      lambda: build_main_menu(state))
     }
 
     def custom_display():
@@ -254,16 +273,15 @@ def set_event_name(state):
     name = input("Event Name: ")
     state.current_event.set_name(name)
 
+
 def set_event_attendees(state):
     count = int(input("Number of attendees: "))
     state.current_event.update_attendees(count)
 
+
 def set_event_ingredients(state, mode):
-    ingredients_raw = input("Available ingredients (comma separated): ")
-    state.current_event.modify_ingredients(ingredients_raw)
-
-
-
+    ing_raw = input("Available ingredients (comma separated): ")
+    state.current_event.modify_ingredients(ing_raw)
 
 
 if __name__ == "__main__":

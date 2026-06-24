@@ -9,6 +9,6 @@ class AppState:
 
     def set_current_event(self, event):
         self.current_event = event
-    
+
     def set_engine(self, engine):
         self.engine = engine
