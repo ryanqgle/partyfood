@@ -1,3 +1,6 @@
+from urllib.parse import urlencode
+
+
 import sqlalchemy as db
 
 
@@ -29,9 +32,10 @@ class Event:
 
     def _rewrite_ingredients(self):
         # Replaces this event's ingredient rows with the current set.
-        # The ingredients table stores one comma-joined string per event, so the
-        # simplest correct update for an add or remove is to rewrite the row.
-        
+        # The ingredients table stores one comma-joined string per event,
+        # so the simplest correct update for an add or remove is to
+        # rewrite the row.
+
         if self.id is None or self.engine is None:
             return
         with self.engine.begin() as conn:
@@ -42,7 +46,7 @@ class Event:
             if self.ingredients:
                 conn.execute(
                     db.text(
-                        "INSERT INTO ingredients (event_id, event_ingredients) "
+                        "INSERT INTO ingredients (event_id, event_ingredients)"
                         "VALUES (:id, :ingredients)"
                     ),
                     {"id": self.id, "ingredients": ",".join(self.ingredients)},
@@ -88,7 +92,7 @@ class Event:
     # diets
     def add_diet(self, diet):
         assert isinstance(diet, str)
-        self.diets.add(diet)
+        self.diets.add(diet.strip().lower())
         self._write(
             "INSERT INTO event_diets (event_id, diet) VALUES (:id, :diet)",
             diet=diet)
@@ -103,7 +107,7 @@ class Event:
     # intolerances
     def add_intolerance(self, intolerance):
         assert isinstance(intolerance, str)
-        self.intolerances.add(intolerance)
+        self.intolerances.add(intolerance.strip().lower())
         self._write(
             "INSERT INTO event_intolerances (event_id, intolerance) "
             "VALUES (:id, :intolerance)",
@@ -147,3 +151,23 @@ class Event:
         self._write(
             "UPDATE events SET attendee_count = :count WHERE id = :id",
             count=count)
+
+    def generate_recipe_search_url(self, state, meal_type=""):
+        params = {}
+
+        if self.diets:
+            params["diet"] = ",".join(self.diets)
+
+        if self.intolerances:
+            params["intolerances"] = ",".join(self.intolerances)
+
+        if meal_type:
+            params["type"] = meal_type
+
+        params["number"] = 3  # we arbitrarily decide to only take 3 results
+        params["apiKey"] = state.spoonacular_key
+
+        url = ("https://api.spoonacular.com/recipes/complexSearch?" +
+               urlencode(params))
+
+        return url
