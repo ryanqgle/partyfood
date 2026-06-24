@@ -12,8 +12,7 @@ class AppState:
 
     def __init__(self, engine):
         self.current_event = None
-        # TODO: put all the existing 
-        self.events = {} #key: eventid from db, value: event obj
+        self.events = {}  # key: eventid from db, value: event obj
         self.engine = engine
 
     def set_event_by_obj(self, event):
@@ -63,7 +62,6 @@ class AppState:
                 self.load_ingredients(connection, event, event_id)
 
                 self.events[event_id] = event
-
 
     def load_diets(self, connection, event, event_id):
         """

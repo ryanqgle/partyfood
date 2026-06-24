@@ -2,6 +2,7 @@ from Menu import Menu
 from MenuItem import MenuItem
 from menu_actions import *
 
+
 def build_intolerances_menu(state, mode, next_menu):
     """
     Builds the menu to add / remove intolerances.
@@ -169,7 +170,7 @@ def build_event_selector(state):
     def select(event):
         state.set_event_by_obj(event)
         return build_edit_event_menu(state)
-    
+
     options = {}
     letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
@@ -178,9 +179,8 @@ def build_event_selector(state):
         options[key] = MenuItem(key, event.name, lambda: select(event))
 
     options["X"] = MenuItem("X", "Back", lambda: build_all_events_menu(state))
-            
+
     return Menu("Select Event", options)
-    
 
 
 def build_create_event_menu(state):
