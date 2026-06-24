@@ -37,6 +37,8 @@ def run_app(state):
             if isinstance(result, Menu):
                 current_menu = result  # change to new menu
 
+        print("")  # newline
+
 
 def init_db(engine):
     # inits the database.
