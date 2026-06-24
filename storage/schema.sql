@@ -40,22 +40,3 @@ CREATE TABLE IF NOT EXISTS event_recipes (
     category TEXT NOT NULL,
     estimated_cost REAL
 );
-
-/* Dummy data used for testing */
-INSERT INTO events (event_name, attendee_count) VALUES ('Birthday Party', 20);
-INSERT INTO events (event_name, attendee_count) VALUES ('Wedding Reception', 100);
-INSERT INTO events (event_name, attendee_count) VALUES ('Corporate Event', 50);
-
-/* event data for event 1: Birthday Party */ 
-INSERT INTO event_diets (event_id, diet) VALUES (1, 'Vegetarian');
-INSERT INTO event_intolerances (event_id, intolerance) VALUES (1, 'Egg');
-
-/* event data for event 2: Wedding Reception */
-INSERT INTO event_diets (event_id, diet) VALUES (2, 'Vegan');
-INSERT INTO event_intolerances (event_id, intolerance) VALUES (2, 'Peanut');
-INSERT INTO ingredients (event_id, event_ingredients) VALUES (2, 'tomatoes,onions,garlic');
-
-/* event data for event 3: Corporate Event */
-INSERT INTO event_diets (event_id, diet) VALUES (3, 'Gluten Free');
-INSERT INTO event_intolerances (event_id, intolerance) VALUES (3, 'Dairy');
-INSERT INTO ingredients (event_id, event_ingredients) VALUES (3, 'chicken,rice,broccoli');

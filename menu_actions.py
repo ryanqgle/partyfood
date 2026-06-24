@@ -1,3 +1,6 @@
+import sqlalchemy as db
+
+
 def set_event_name(state):
     name = input("Event Name: ")
     state.current_event.set_name(name)

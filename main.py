@@ -4,7 +4,6 @@ from menu_builders import build_main_menu
 from Event import Event
 from AppState import AppState
 import sqlalchemy as db
-import pandas as pd
 
 
 def main():

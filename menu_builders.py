@@ -179,16 +179,15 @@ def build_event_selector(state):
     """
     def select(event):
         state.set_event_by_obj(event)
-        return build_edit_event_menu(state)
+        return build_single_event_menu(state)
 
     options = {}
-    letters = "ABCDEFGHIJKLMNOPQRSTUVWYZ"
-    # TODO: since we only have 25 available letters,
-    # we should limit them to only be able to make 25 events
+    letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
     for i, (eid, event) in enumerate(state.events.items()):
         key = letters[i]
-        options[key] = MenuItem(key, event.name, lambda: select(event))
+        options[key] = MenuItem(key, event.name,
+                                lambda event=event: select(event))
 
     options["X"] = MenuItem("X", "Back", lambda: build_all_events_menu(state))
 
@@ -215,7 +214,7 @@ def build_create_event_menu(state):
         "E": MenuItem("E", "Set Attendees",
                       lambda: set_event_attendees(state)),
         "X": MenuItem("X", "Save Event",
-                      lambda: build_main_menu(state))
+                      lambda: save_event(state))
     }
 
     def custom_display():
@@ -228,3 +227,57 @@ def build_create_event_menu(state):
 
     menu.display = custom_display
     return menu
+
+
+def save_event(state):
+    # Persists the current in-memory event (and its diets, intolerances,
+    # and ingredients) to the database, then returns to the main menu.
+    event = state.current_event
+    engine = state.engine
+
+    with engine.begin() as conn:  # begin() commits automatically on success
+        result = conn.execute(
+            db.text(
+                "INSERT INTO events (event_name, attendee_count) "
+                "VALUES (:name, :count)"
+            ),
+            {"name": event.name, "count": event.attendee_count},
+        )
+
+        # get the auto-incremented id so child rows can reference it
+        event.id = result.lastrowid
+
+        for diet in event.diets:
+            conn.execute(
+                db.text(
+                    "INSERT INTO event_diets (event_id, diet) "
+                    "VALUES (:id, :diet)"
+                ),
+                {"id": event.id, "diet": diet},
+            )
+
+        for intolerance in event.intolerances:
+            conn.execute(
+                db.text(
+                    "INSERT INTO event_intolerances (event_id, intolerance) "
+                    "VALUES (:id, :intolerance)"
+                ),
+                {"id": event.id, "intolerance": intolerance},
+            )
+
+        # schema stores ingredients as a single comma-joined string per event
+        if event.ingredients:
+            conn.execute(
+                db.text(
+                    "INSERT INTO ingredients (event_id, event_ingredients) "
+                    "VALUES (:id, :ingredients)"
+                ),
+                {"id": event.id, "ingredients": ",".join(event.ingredients)},
+            )
+
+    # keep the in-memory dict in sync with the db so menus that read
+    # state.events (e.g. the event selector) include the new event
+    state.events[event.id] = event
+
+    print(f"Saved '{event.name}' (id {event.id}).")
+    return build_main_menu(state)
