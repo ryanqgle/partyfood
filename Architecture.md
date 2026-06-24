@@ -104,7 +104,8 @@ The local SQLite database stores **events** and their associated data.
 
 | Field | Type | Description |
 |---|---|---|
-| idk yet
+| `event_id` | INTEGER (FOREIGN KEY) | References `events.id` |
+| `event_ingredients` | TEXT | List of available ingredients (e.g. 'eggs,butter,peanuts') |
 
 ### `event_recipes` table
 
