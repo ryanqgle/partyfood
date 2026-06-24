@@ -229,11 +229,25 @@ def build_event_selector(state):
             print("No events found. Please create an event first")
             return
 
-        events = [row[0] for row in result]
+        def select():
+            state.set_current_event() # TODO: add functionality (in AppState.py) to get the event associated with ID
+            return build_edit_event_menu(state)
 
-        print("Select an event:")
-        for i, event in enumerate(events, 1):
-            print(f"  {i}. {event}")
+
+        options = {}
+        for i in range(len(rows)):
+            row = rows[i]
+            event_id = row[0]
+            event_name = row[1]
+
+            options[i] = MenuItem(
+                i, event_name, lambda: select()
+            )
+
+        options["X"] = MenuItem("X", "Back", lambda: build_all_events_menu(state))
+
+    
+    return Menu("Select Event", options)
 
 
 def build_create_event_menu(state):
