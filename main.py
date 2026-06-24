@@ -22,7 +22,6 @@ def run_app(engine):
     Runs the CLI.
     """
     state = AppState()
-    state.set_current_event(Event("dummy", 10))
     state.set_engine(engine)
 
     current_menu = build_main_menu(state)
@@ -235,8 +234,8 @@ def build_event_selector(state):
 
 
         options = {}
-        for i in range(len(rows)):
-            row = rows[i]
+        for i in range(len(result)):
+            row = result[i]
             event_id = row[0]
             event_name = row[1]
 
