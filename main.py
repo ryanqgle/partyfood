@@ -217,36 +217,35 @@ def build_event_selector(state):
     # WIP
     # This method should fetch the events from database and present
     # them as options in a menu
-    engine = state.engine
+    # engine = state.engine
+    # with engine.connect() as connection:
+    #     result = connection.execute(
+    #         db.text("SELECT event_name FROM events;")
+    #     ).fetchall()
 
-    with engine.connect() as connection:
-        result = connection.execute(
-            db.text("SELECT event_name FROM events;")
-        ).fetchall()
+    #     if not result:
+    #         print("No events found. Please create an event first")
+    #         return
+    # def select(event_id):
+    #     state.set_current_event() # TODO: add functionality (in AppState.py) to get the event associated with ID
+    #     return build_edit_event_menu(state)
+    # options = {}
+    # for i in range(len(result)):
+    #     row = result[i]
+    #     event_id = row[0]
+    #     event_name = row[1]
 
-        if not result:
-            print("No events found. Please create an event first")
-            return
+    #     options[i] = MenuItem(
+    #         i, event_name, lambda eid=event_id: select(eid)
+    #     )
+    # options["X"] = MenuItem("X", "Back", lambda: build_all_events_menu(state))
 
-        def select(event_id):
-            state.set_current_event() # TODO: add functionality (in AppState.py) to get the event associated with ID
-            return build_edit_event_menu(state)
-
-
-        options = {}
-        for i in range(len(result)):
-            row = result[i]
-            event_id = row[0]
-            event_name = row[1]
-
-            options[i] = MenuItem(
-                i, event_name, lambda eid=event_id: select(eid)
-            )
-
-        options["X"] = MenuItem("X", "Back", lambda: build_all_events_menu(state))
+    #since we now have a dict of all the events, i realized we dont need to call db to get them anymore so will be updating this
 
     
-    return Menu("Select Event", options)
+    # return Menu("Select Event", options)
+    # stub
+    return
 
 
 def build_create_event_menu(state):
