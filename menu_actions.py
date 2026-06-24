@@ -13,7 +13,7 @@ def set_event_attendees(state):
 
 def set_event_ingredients(state, mode):
     ing_raw = input("Available ingredients (comma separated): ")
-    state.current_event.modify_ingredients(ing_raw)
+    state.current_event.modify_ingredients(ing_raw, mode)
 
 
 def view_recipes(state):

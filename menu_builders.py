@@ -207,11 +207,9 @@ def build_create_event_menu(state):
         "B": MenuItem("B", "Add Existing Ingredients",
                       lambda: set_event_ingredients(state, 0)),
         "C": MenuItem("C", "Add Diets",
-                      lambda: build_diets_menu(state,
-                                               0, lambda: menu)),
+                      lambda: build_diets_menu(state, 0, menu)),
         "D": MenuItem("D", "Add Intolerances",
-                      lambda: build_intolerances_menu(state,
-                                                      0, lambda: menu)),
+                      lambda: build_intolerances_menu(state, 0, menu)),
         "E": MenuItem("E", "Set Attendees",
                       lambda: set_event_attendees(state)),
         "X": MenuItem("X", "Save Event",
@@ -275,6 +273,10 @@ def save_event(state):
                 ),
                 {"id": event.id, "ingredients": ",".join(event.ingredients)},
             )
+
+    # now that the event has an id, attach the engine so later edits
+    # (diets, attendees, etc.) persist to the db on their own
+    event.engine = engine
 
     # keep the in-memory dict in sync with the db so menus that read
     # state.events (e.g. the event selector) include the new event
