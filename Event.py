@@ -45,30 +45,37 @@ class Event:
     def add_diet(self, diet):
         assert isinstance(diet, str)
         self.diets.add(diet)
+        # TODO: update db
 
     def remove_diet(self, diet):
         assert isinstance(diet, str)
         self.diets.remove(diet)
+        # TODO: update db
 
     # intolerances
     def add_intolerance(self, intolerance):
         assert isinstance(intolerance, str)
         self.intolerances.add(intolerance)
+        # TODO: update db
 
     def remove_intolerance(self, intolerance):
         assert isinstance(intolerance, str)
         self.intolerances.remove(intolerance)
+        # TODO: update db
 
     # ingredients
     def add_ingredient(self, ingredient):
         assert isinstance(ingredient, str)
         self.ingredients.add(ingredient)
+        # TODO: update db
 
     def remove_ingredient(self, ingredient):
         assert isinstance(ingredient, str)
         self.ingredients.remove(ingredient)
+        # TODO: update db
 
     # attendees
     def update_attendees(self, count):
         assert isinstance(count, int)
         self.attendee_count = count
+        # TODO: update db
