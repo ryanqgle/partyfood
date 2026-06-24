@@ -1,3 +1,10 @@
+from Menu import Menu
+from MenuItem import MenuItem
+from Event import Event
+import sqlalchemy as db
+import pandas as pd
+
+
 class AppState:
     """
     Holds shared state and does database stuff
@@ -5,8 +12,7 @@ class AppState:
 
     def __init__(self, engine):
         self.current_event = None
-        # TODO: put all the existing 
-        self.events = {} #key: eventid from db, value: event obj
+        self.events = {}  # key: eventid from db, value: event obj
         self.engine = engine
 
     def set_event_by_obj(self, event):
@@ -51,12 +57,11 @@ class AppState:
 
                 event = Event(event_name, attendees)
 
-                load_diets(connection, event, event_id)
-                load_intolerances(connection, event, event_id)
-                load_ingredients(connection, event, event_id)
+                self.load_diets(connection, event, event_id)
+                self.load_intolerances(connection, event, event_id)
+                self.load_ingredients(connection, event, event_id)
 
                 self.events[event_id] = event
-
 
     def load_diets(self, connection, event, event_id):
         """
