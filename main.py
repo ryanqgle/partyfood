@@ -14,16 +14,15 @@ def main():
 
     # Run as normal
     print("partyfood: coming soon")
-    run_app(engine)
+    state = AppState(engine)
+    state.populate_events()
+    run_app(state)
 
 
-def run_app(engine):
+def run_app(state):
     """
     Runs the CLI.
     """
-    state = AppState()
-    state.set_engine(engine)
-
     current_menu = build_main_menu(state)
 
     while current_menu:
@@ -215,6 +214,7 @@ def build_main_menu(state):
 
 
 def build_event_selector(state):
+    # WIP
     # This method should fetch the events from database and present
     # them as options in a menu
     engine = state.engine
@@ -228,7 +228,7 @@ def build_event_selector(state):
             print("No events found. Please create an event first")
             return
 
-        def select():
+        def select(event_id):
             state.set_current_event() # TODO: add functionality (in AppState.py) to get the event associated with ID
             return build_edit_event_menu(state)
 
@@ -240,7 +240,7 @@ def build_event_selector(state):
             event_name = row[1]
 
             options[i] = MenuItem(
-                i, event_name, lambda: select()
+                i, event_name, lambda eid=event_id: select(eid)
             )
 
         options["X"] = MenuItem("X", "Back", lambda: build_all_events_menu(state))
@@ -250,6 +250,9 @@ def build_event_selector(state):
 
 
 def build_create_event_menu(state):
+    """
+    Builds the menu to create a new event
+    """
     state.current_event = Event("New Event")
     menu = Menu("Options", {})
     menu.options = {

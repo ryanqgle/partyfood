@@ -1,18 +1,25 @@
 class AppState:
     """
-    Holds shared state
+    Holds shared state and does database stuff
     """
 
-    def __init__(self):
+    def __init__(self, engine):
         self.current_event = None
         # TODO: put all the existing 
         self.events = {} #key: eventid from db, value: event obj
-        self.engine = None
+        self.engine = engine
 
     def set_event_by_obj(self, event):
+        """
+        Sets current event by receiving an event object
+        """
         self.current_event = event
+        # we should also make sure this event is in self.events
 
     def set_event_by_id(self, eventid):
+        """
+        Sets current event by receiving the eventID
+        """
         obj = self.events.get(eventid)
         if obj:
             self.current_event = obj
@@ -52,6 +59,9 @@ class AppState:
 
 
     def load_diets(self, connection, event, event_id):
+        """
+        Loads all diets associated with an event from the db
+        """
         result = connection.execute(
             db.text("""
                 SELECT diet
