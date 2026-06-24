@@ -16,19 +16,36 @@ def set_event_ingredients(state, mode):
     state.current_event.modify_ingredients(ing_raw)
 
 
-def list_all_events(state):
-    # Prints every event stored in the database. 
-    engine = state.engine
+def view_recipes(state):
+    """
+    Prints recipes for one event
+    """
+    event = state.current_event
 
-    with engine.connect() as connection:
-        result = connection.execute(
-            db.text("SELECT id, event_name, attendee_count FROM events;")
-        ).fetchall()
-
-    if not result:
-        print("No events found. Please create an event first.")
+    if not event.recipes:
+        print("No saved recipes")
         return
 
-    print("==== All Events ====")
-    for event_id, name, attendee_count in result:
-        print(f"  {event_id}. {name} ({attendee_count} attendees)")
+    # I think we will eventually need to make a class for recipes
+    # and each recipe will have it's own display function
+    # then we can loop through displays recipes here and display
+    return
+
+
+def list_all_events(state):
+    """
+    Displays information for all events
+    """
+    print("==== ALL EVENTS ====")
+    for event in state.events.values():
+        event.display()
+        print("")  # create newline
+
+    return
+
+
+def generate_recipes():
+    """
+    this is the scary part
+    """
+    return
