@@ -86,9 +86,9 @@ class Event:
 
         for ingredient in ingredients:
             if mode == 0:
-                state.current_event.add_ingredient(ingredient)
+                self.add_ingredient(ingredient)
             else:
-                state.current_event.remove_ingredient(ingredient)
+                self.remove_ingredient(ingredient)
 
     # attendees
     def update_attendees(self, count):

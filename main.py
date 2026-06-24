@@ -14,17 +14,15 @@ def main():
 
     # Run as normal
     print("partyfood: coming soon")
-    run_app(engine)
+    state = AppState(engine)
+    state.populate_events()
+    run_app(state)
 
 
-def run_app(engine):
+def run_app(state):
     """
     Runs the CLI.
     """
-    state = AppState()
-    state.set_current_event(Event("dummy", 10))
-    state.set_engine(engine)
-
     current_menu = build_main_menu(state)
 
     while current_menu:
@@ -216,24 +214,89 @@ def build_main_menu(state):
 
 
 def build_event_selector(state):
+    # WIP
     # This method should fetch the events from database and present
     # them as options in a menu
-    engine = state.engine
+    # engine = state.engine
+    # with engine.connect() as connection:
+    #     result = connection.execute(
+    #         db.text("SELECT event_name FROM events;")
+    #     ).fetchall()
 
-    with engine.connect() as connection:
-        result = connection.execute(
-            db.text("SELECT event_name FROM events;")
-        ).fetchall()
+    #     if not result:
+    #         print("No events found. Please create an event first")
+    #         return
+    # def select(event_id):
+    #     state.set_current_event() # TODO: add functionality (in AppState.py) to get the event associated with ID
+    #     return build_edit_event_menu(state)
+    # options = {}
+    # for i in range(len(result)):
+    #     row = result[i]
+    #     event_id = row[0]
+    #     event_name = row[1]
 
-        if not result:
-            print("No events found. Please create an event first")
-            return
+    #     options[i] = MenuItem(
+    #         i, event_name, lambda eid=event_id: select(eid)
+    #     )
+    # options["X"] = MenuItem("X", "Back", lambda: build_all_events_menu(state))
 
-        events = [row[0] for row in result]
+    #since we now have a dict of all the events, i realized we dont need to call db to get them anymore so will be updating this
 
-        print("Select an event:")
-        for i, event in enumerate(events, 1):
-            print(f"  {i}. {event}")
+    
+    # return Menu("Select Event", options)
+    # stub
+    return
+
+
+def build_create_event_menu(state):
+    """
+    Builds the menu to create a new event
+    """
+    state.current_event = Event("New Event")
+    menu = Menu("Options", {})
+    menu.options = {
+        "A": MenuItem("A", "Set Name",
+                      lambda: set_event_name(state)),
+        "B": MenuItem("B", "Add Existing Ingredients",
+                      lambda: set_event_ingredients(state, 0)),
+        "C": MenuItem("C", "Add Diets",
+                      lambda: build_diets_menu(state,
+                                               0, lambda: menu)),
+        "D": MenuItem("D", "Add Intolerances",
+                      lambda: build_intolerances_menu(state,
+                                                      0, lambda: menu)),
+        "E": MenuItem("E", "Set Attendees",
+                      lambda: set_event_attendees(state)),
+        "X": MenuItem("X", "Save Event",
+                      lambda: build_main_menu(state))
+    }
+
+    def custom_display():
+        event = state.current_event
+        print("==== Create Event ====")
+        event.display()
+        for item in menu.options.values():
+            item.display()
+
+    menu.display = custom_display
+    return menu
+
+
+# FUNCTIONS TO RUN FOR OPTIONS
+
+def set_event_name(state):
+    name = input("Event Name: ")
+    state.current_event.set_name(name)
+
+
+def set_event_attendees(state):
+    count = int(input("Number of attendees: "))
+    state.current_event.update_attendees(count)
+
+
+def set_event_ingredients(state, mode):
+    ing_raw = input("Available ingredients (comma separated): ")
+    state.current_event.modify_ingredients(ing_raw)
 
 
 def build_create_event_menu(state):
