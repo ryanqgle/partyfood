@@ -137,4 +137,3 @@ class AppState:
 
             recipe = Recipe(rname, ingreds, rid)
             event.saved_recipes.add(recipe)
-

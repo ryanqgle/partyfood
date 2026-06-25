@@ -192,8 +192,8 @@ def build_main_menu(state):
                       lambda: build_all_events_menu(state)),
         "B": MenuItem("B", "Create New Event",
                       lambda: build_create_event_menu(state)),
-        "C": MenuItem("C", "Generate Recipes", None),  # TODO also should prompt
-                                                      # with event selector
+        "C": MenuItem("C", "Generate Recipes", None),
+        # TODO: prompt C with event selector
         "X": MenuItem("X", "Quit App", lambda: exit())
     }
     return Menu("Main", main_menu_dict)

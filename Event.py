@@ -163,7 +163,9 @@ class Event:
         if meal_type:
             params["type"] = meal_type
 
-        params["number"] = 1  # we arbitrarily decide to only take 1 result for api rate reasons
+        # we arbitrarily decide to only take 1 result for api rate
+        params["number"] = 1
+
         params["apiKey"] = state.spoonacular_key
 
         url = ("https://api.spoonacular.com/recipes/complexSearch?" +
@@ -196,12 +198,12 @@ class Event:
                         :estimated_cost,
                         :ingredients)
                     """),
-                    {
-                        "event_id": str(self.id),
-                        "recipe_id": str(recipe.id),
-                        "recipe_name": recipe.name,
-                        "category": category,
-                        "estimated_cost": estimated_cost,
-                        "ingredients": ingredients
-                    }
+                {
+                    "event_id": str(self.id),
+                    "recipe_id": str(recipe.id),
+                    "recipe_name": recipe.name,
+                    "category": category,
+                    "estimated_cost": estimated_cost,
+                    "ingredients": ingredients
+                }
             )
