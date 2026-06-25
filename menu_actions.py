@@ -173,18 +173,18 @@ def generate_recipes(state):
     event = state.current_event
 
     main_url = event.generate_recipe_search_url(state, "main course")
-    appetizer_url = event.generate_recipe_search_url(state, "appetizer")
-    dessert_url = event.generate_recipe_search_url(state, "dessert")
+    # appetizer_url = event.generate_recipe_search_url(state, "appetizer")
+    # dessert_url = event.generate_recipe_search_url(state, "dessert")
     categories = {
         "main course": main_url,
-        "appetizer": appetizer_url,
-        "dessert": dessert_url,
+        # "appetizer": appetizer_url,
+        # "dessert": dessert_url,
     }
 
     recipes = {
         "main course": {},
-        "appetizer": {},
-        "dessert": {}
+        # "appetizer": {},
+        # "dessert": {}
     }
 
     for category, url in categories.items():
@@ -206,15 +206,15 @@ def generate_recipes(state):
         recipe.display()
     print("")
 
-    print("!!! APPETIZERS !!!")
-    for recipe in recipes["appetizer"].values():
-        recipe.display()
-    print("")
+    # print("!!! APPETIZERS !!!")
+    # for recipe in recipes["appetizer"].values():
+    #     recipe.display()
+    # print("")
 
-    print("!!! DESSERTS !!!")
-    for recipe in recipes["dessert"].values():
-        recipe.display()
-    print("")
+    # print("!!! DESSERTS !!!")
+    # for recipe in recipes["dessert"].values():
+    #     recipe.display()
+    # print("")
 
     for category in recipes:
         for recipe in recipes[category].values():
