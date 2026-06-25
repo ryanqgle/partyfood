@@ -131,6 +131,7 @@ def build_edit_event_menu(state):
         "H": MenuItem("H", "Generate Recipes",
                       lambda: generate_recipes(state)),
         # "I": MenuItem("I", "Remove Recipe", None)  # could be later
+        "J": MenuItem("J", "Delete Event", lambda: delete_event(state)),
         "X": MenuItem("X", "Save Event",
                       lambda: build_single_event_menu(state))
     }
