@@ -6,6 +6,14 @@ class Recipe:
         self.ingredients = ingredients
         self.id = id
 
+    def __hash__(self):
+        return hash(self.id)
+
+    def __eq__(self, other):
+        if not isInstance(other, Recipe):
+            return NotImplemented
+        return self.id == other.id
+
     def display(self):
         print("\n" + self.name)
         print("Ingredients: ")
