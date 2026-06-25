@@ -10,7 +10,7 @@ class Recipe:
         return hash(self.id)
 
     def __eq__(self, other):
-        if not isInstance(other, Recipe):
+        if not isinstance(other, Recipe):
             return NotImplemented
         return self.id == other.id
 

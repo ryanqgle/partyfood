@@ -90,6 +90,71 @@ def list_all_events(state):
             print("")
 
 
+def delete_event(state):
+    """
+    Delete current event. Removes it from the
+    state's stored events as well as the
+    database.
+
+    Args:
+        state: Global state
+    """
+    # import statement here to avoid circular imports
+    from menu_builders import build_all_events_menu
+
+    if not state_event_error_handler(state):
+        return
+
+    confirm = "no input yet"
+
+    while confirm != "y":
+        confirm = input("WARNING: This cannot be undone." +
+                        "Type 'y' to confirm and 'n' to go back.")
+        if (confirm.lower() == "n"):
+            print("Event deletion cancelled.")
+            return
+        elif (confirm != "y"):
+            print("Invalid input.")
+
+    event = state.current_event
+
+    # delete from db
+    try:
+        with event.engine.begin() as conn:
+            conn.execute(
+                db.text("DELETE FROM event_diets WHERE event_id = :id"),
+                {"id": event.id}
+            )
+
+            conn.execute(
+                db.text("DELETE FROM event_intolerances WHERE event_id = :id"),
+                {"id": event.id}
+            )
+
+            conn.execute(
+                db.text("DELETE FROM ingredients WHERE event_id = :id"),
+                {"id": event.id}
+            )
+
+            conn.execute(
+                db.text("DELETE FROM event_recipes WHERE event_id = :id"),
+                {"id": event.id}
+            )
+
+            conn.execute(
+                db.text("DELETE FROM events WHERE id = :id"),
+                {"id": event.id}
+            )
+
+        state.current_event = None
+        state.events.pop(event.id, None)  # deletes from state
+        print("Successfully deleted the event.")
+    except SQLAlchemyError as e:
+        print(f"Failed to delete event: {e}")
+
+    return build_all_events_menu(state)
+
+
 def generate_recipes(state):
     """
     Generates recipes using Spoonacular's API for the current_event based on
