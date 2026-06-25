@@ -6,20 +6,23 @@
 User Input (CLI)
       │
       ▼
-  Backend / App Logic
+Backend / App Logic
       │
-      ├──► Spoonacular API  ──► Recipe results (filtered by diet, intolerances, ingredients)
+      ├──► Spoonacular API
+      │         │
+      │         ▼
+      │    Recipe Results
       │
-      └──► Kroger API  ──► Ingredient pricing
+      └──► Gemini API
+                │
+                ▼
+        Cost Estimates
       │
       ▼
-  Normalize & Combine Data
+CLI Output
       │
       ▼
-  CLI Output (recipes + cost estimates)
-      │
-      ▼
-  SQLite Database  ◄──► Save recipes to event (optional)
+SQLite Database
 ```
 
 ### Step-by-Step
@@ -29,17 +32,19 @@ User Input (CLI)
    2. [Create New Event](#create-new-event)
    3. [Generate Recipes](#generate-recipes)
 2. User makes selections via numbered/lettered CLI menus.
-3. Backend stores inputs and sends a `GET` request to the **Spoonacular API** with `diet`, `intolerances`, and ingredient parameters.
-4. Using Spoonacular results, backend sends a `GET` request to the **Kroger API** to fetch ingredient pricing.
-5. Backend normalizes and merges data, then displays categorized recipes with cost breakdowns.
-6. User may optionally save chosen recipes and events.
+3. User configures event details such as attendee count, diets, and intolerances. These changes are saved to the SQL Lite database.
+4. From the event menu, the user may generate recipes. 
+5. The backend sends a `GET` request to the **Spoonacular API** with `diet`, `intolerances`, and ingredient parameters.
+6. Matching recipes are displayed and saved to the selected event. The user may view saved recipes at any time.
+7. The user may optionally request a cost estimate for an event's recipes.
+8. The backend sends recipe ingredient information and attendee count to the **Gemini API.** Gemini returns an estimated grocery cost, which is displayed in the CLI.
+
    
 ### View and Edit Events
 
 Lets users do the following:
 - Add/remove diets
 - Add/remove intolerances
-- Add/remove available ingredients
 - Set/update attendee count
 - Generate recipes
 - Remove recipe
@@ -115,7 +120,9 @@ The local SQLite database stores **events** and their associated data.
 | `recipe_id` | TEXT | Spoonacular recipe ID |
 | `recipe_name` | TEXT | Display name |
 | `category` | TEXT | e.g. `"main"`, `"dessert"`, `"drink"` |
-| `estimated_cost` | REAL | Total ingredient cost from Kroger |
+| `estimated_cost` | REAL | AI-generated grocery cost estimate |
+| `ingredients` | TEXT | List of ingredients |
+
 
 ## Example Events
 

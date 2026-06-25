@@ -4,13 +4,12 @@ A CLI tool that helps party planners and caterers find recipes that accommodate 
 
 ## Overview
 
-When planning a party, guests often have differing diets, allergies, and restrictions that can make it hard for the party planner to choose food that everyone can eat. With our project, party planners would have a tool that allows them to get meal ideas that align with everyone’s different dietary restrictions, and it would also help them in their budget planning by giving a price estimate of the food.
+When planning a party, guests often have differing diets, allergies, and restrictions that can make it hard for the party planner to choose food that everyone can eat. With our project, party planners would have a tool that allows them to get meal ideas that align with everyone’s different dietary restrictions, and it would also help them in their budget planning by generating AI-powered cost estimates based on recipe ingredients and attendee count.
 
 ## Features
 
 - Search for recipes filtered by diet type and food intolerances
-- Input available ingredients to minimize what you need to buy
-- Get cost estimates per recipe using Kroger grocery data
+- Generate AI-powered cost estimates for recipes based on ingredients and attendee count
 - Organize recipes by meal category (mains, sides, appetizers, desserts, drinks)
 - Save events with their guest constraints and generated recipes
 - Manage multiple events (birthday parties, weddings, etc.)
@@ -21,7 +20,7 @@ When planning a party, guests often have differing diets, allergies, and restric
 |---|---|
 | Interface | CLI |
 | Recipe data | [Spoonacular API](https://spoonacular.com/food-api) |
-| Grocery pricing | [Kroger API](https://developer.kroger.com/api-products/api/product-api-partner) |
+| Cost estimation | [Google Gemini API](https://ai.google.dev/gemini-api) |
 | Storage | SQLite (local database) |
 
 ## Quick Start

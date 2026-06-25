@@ -154,7 +154,8 @@ def build_single_event_menu(state):
         "B": MenuItem("B", "View All Recipes",
                       lambda: view_recipes(state)),  # TODO
         # "C": MenuItem("C", "List Ingredients", None),  # could be later
-        # "D": MenuItem("D", "View One Recipe", None),  # could be later
+        "D": MenuItem("D", "Estimate Prices",
+                      lambda: estimate_recipe_cost(state)),
         "E": MenuItem("E", "Edit Event",
                       lambda: build_edit_event_menu(state)),
         "X": MenuItem("X", "Back to All Events",
@@ -192,7 +193,7 @@ def build_main_menu(state):
                       lambda: build_all_events_menu(state)),
         "B": MenuItem("B", "Create New Event",
                       lambda: build_create_event_menu(state)),
-        "C": MenuItem("C", "Generate Recipes", None),
+        # "C": MenuItem("C", "Generate Recipes", None),
         # TODO: prompt C with event selector
         "X": MenuItem("X", "Quit App", lambda: exit())
     }

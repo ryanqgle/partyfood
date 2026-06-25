@@ -19,6 +19,7 @@ class AppState:
 
         load_dotenv(dotenv_path=".env", override=True)
         self.spoonacular_key = os.getenv("SPOONACULAR_KEY")
+        self.gemini_key = os.getenv("GEMINI_KEY")
 
     def set_event_by_obj(self, event):
         """

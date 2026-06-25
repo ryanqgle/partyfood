@@ -1,9 +1,9 @@
+from Recipe import Recipe
+from google import genai
+from google.genai import types
 import requests
 import json
 import os
-from Recipe import Recipe
-
-
 import sqlalchemy as db
 
 
@@ -76,14 +76,15 @@ def list_all_events(state):
     print("==== ALL EVENTS ====")
     for event in state.events.values():
         event.display()
-        print("")  # create newline
+        print("")
 
     return
 
 
 def generate_recipes(state):
     """
-    Generates recipes using Spoonacular's API for the current_event.
+    Generates recipes using Spoonacular's API for the current_event based on
+    the diets and intolerances associated with the event.
 
     Args:
         state: Global state
@@ -150,6 +151,14 @@ def generate_recipes(state):
 
 
 def get_recipe_ingredients(state, recipeid):
+    """
+    Uses Spoonacular API call to fetch the ingredients of a single
+    recipe.
+
+    Args:
+        state: Global state
+        recipeid: The ID associated with a recipe.
+    """
     url = (f"https://api.spoonacular.com/recipes/" +
            f"{recipeid}/ingredientWidget.json?"
            + f"apiKey={state.spoonacular_key}")
@@ -168,3 +177,60 @@ def get_recipe_ingredients(state, recipeid):
         ingredients.append(ingredient["name"])
 
     return ingredients
+
+
+def estimate_recipe_cost(state):
+    """
+    Uses Gemini API call to estimate the cost of all recipes affiliated
+    with the current event and provide a breakdown based on ingredient.
+
+    Args:
+        state: Global state
+    """
+    attendees = state.current_event.attendee_count
+    recipes = state.current_event.saved_recipes
+    recipe_text = ""
+
+    for recipe in recipes:
+        recipe_text += f"""
+        Recipe: {recipe.name}
+        Ingredients: {', '.join(recipe.ingredients)}
+        """
+
+    client = genai.Client(api_key=state.gemini_key)
+
+    prompt = f"""
+    Estimate the grocery cost for preparing this recipe for {attendees}
+    people in the United states.
+    Assume average supermarket prices
+
+    Recipes:
+    {recipe_text}
+
+    Requirements:
+    - Estimate the cost of each ingredient.
+    - Show the subtotal for each recipe.
+    - Show a reasonable price range for each recipe.
+    - Show a grand total range for all recipes combined.
+    - Do not explain your reasoning.
+    - Do not include introductions or conclusions.
+    - Format exactly like:
+
+    Recipe: <recipe name>
+    Ingredient costs:
+    - ingredient: $x-$y
+    - ingredient: $x-$y
+    Recipe total: $x-$y
+
+    Recipe: <recipe name>
+    ...
+
+    Grand Total: $x-$y
+    """
+
+    response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt
+                )
+
+    print(response.text)
