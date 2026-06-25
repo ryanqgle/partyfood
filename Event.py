@@ -52,15 +52,15 @@ class Event:
                 )
 
     def display(self):
-        print("~ " + self.name + " ~")
+        print("\n~ " + self.name + " ~")
         print(f"Number of Attendees: {self.attendee_count}")
 
-        ingredients_string = (
-            ', '.join(self.ingredients)
-            if self.ingredients
-            else 'None'
-        )
-        print(f"Available Ingredients: {ingredients_string}")
+        # ingredients_string = (
+        #     ', '.join(self.ingredients)
+        #     if self.ingredients
+        #     else 'None'
+        # )
+        # print(f"Available Ingredients: {ingredients_string}")
 
         diets_string = (
             ', '.join(self.diets)
@@ -152,6 +152,15 @@ class Event:
             count=count)
 
     def generate_recipe_search_url(self, state, meal_type=""):
+        """
+        Generates a URL for Spoonacular to be able to find recipes that
+        are compatible with the event's associated diets and intolerances
+        as well as the type of meal, if provided.
+
+        Args:
+            state: Global state
+            meal_type: Differentiator between main dish, appetizer, etc
+        """
         params = {}
 
         if self.diets:
@@ -164,7 +173,7 @@ class Event:
             params["type"] = meal_type
 
         # we arbitrarily decide to only take 1 result for api rate
-        params["number"] = 1
+        params["number"] = 2
 
         params["apiKey"] = state.spoonacular_key
 
@@ -174,6 +183,13 @@ class Event:
         return url
 
     def add_recipe(self, recipe, category=None, estimated_cost=None):
+        """
+        Adds a recipe to this event and also updates the database.
+
+        Args:
+            recipe: Recipe object to be added
+            category: The meal type (like appetizer, main dish, dessert)
+        """
         self.saved_recipes.add(recipe)
         ingredients = ",".join(recipe.ingredients)
 

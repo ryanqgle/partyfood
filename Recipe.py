@@ -7,7 +7,7 @@ class Recipe:
         self.id = id
 
     def display(self):
-        print(self.name)
+        print("\n" + self.name)
         print("Ingredients: ")
         for ingredient in self.ingredients:
             print("- " + ingredient)

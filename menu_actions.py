@@ -1,9 +1,9 @@
-import requests
-import json
-import os
 from Recipe import Recipe
 from google import genai
 from google.genai import types
+import requests
+import json
+import os
 import sqlalchemy as db
 
 
@@ -76,14 +76,15 @@ def list_all_events(state):
     print("==== ALL EVENTS ====")
     for event in state.events.values():
         event.display()
-        print("")  # create newline
+        print("")
 
     return
 
 
 def generate_recipes(state):
     """
-    Generates recipes using Spoonacular's API for the current_event.
+    Generates recipes using Spoonacular's API for the current_event based on
+    the diets and intolerances associated with the event.
 
     Args:
         state: Global state
@@ -98,11 +99,11 @@ def generate_recipes(state):
     # output should be a print statement of the recipes
 
     main_url = event.generate_recipe_search_url(state, "main course")
-    appetizer_url = event.generate_recipe_search_url(state, "appetizer")
+    # appetizer_url = event.generate_recipe_search_url(state, "appetizer")
     # dessert_url = event.generate_recipe_search_url(state, "dessert")
     categories = {
         "main course": main_url,
-        "appetizer": appetizer_url,
+        # "appetizer": appetizer_url,
         # "dessert": dessert_url,
     }
 
@@ -130,10 +131,10 @@ def generate_recipes(state):
         recipe.display()
     print("")
 
-    print("!!! APPETIZERS !!!")
-    for recipe in recipes["appetizer"].values():
-        recipe.display()
-    print("")
+    # print("!!! APPETIZERS !!!")
+    # for recipe in recipes["appetizer"].values():
+    #     recipe.display()
+    # print("")
 
     # print("!!! DESSERTS !!!")
     # for recipe in recipes["dessert"].values():
@@ -150,6 +151,14 @@ def generate_recipes(state):
 
 
 def get_recipe_ingredients(state, recipeid):
+    """
+    Uses Spoonacular API call to fetch the ingredients of a single
+    recipe.
+
+    Args:
+        state: Global state
+        recipeid: The ID associated with a recipe.
+    """
     url = (f"https://api.spoonacular.com/recipes/" +
            f"{recipeid}/ingredientWidget.json?"
            + f"apiKey={state.spoonacular_key}")
@@ -171,6 +180,13 @@ def get_recipe_ingredients(state, recipeid):
 
 
 def estimate_recipe_cost(state):
+    """
+    Uses Gemini API call to estimate the cost of all recipes affiliated
+    with the current event and provide a breakdown based on ingredient.
+
+    Args:
+        state: Global state
+    """
     attendees = state.current_event.attendee_count
     recipes = state.current_event.saved_recipes
     recipe_text = ""
