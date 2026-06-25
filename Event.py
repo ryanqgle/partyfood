@@ -83,6 +83,8 @@ class Event:
         )
         print(f"Saved Recipes: {saved_recipes_string}")
 
+        
+
     def set_name(self, name):
         self.name = name
         self._write("UPDATE events SET event_name = :name WHERE id = :id",

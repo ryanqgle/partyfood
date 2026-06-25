@@ -362,3 +362,15 @@ def state_event_error_handler(state):
         print("No event selected.")
         return False
     return True
+
+def set_cost_estimate(self, estimated_cost):
+        """
+        Stores Gemini's cost estimate text on all of this event's recipes.
+
+        Args:
+            estimated_cost: The full estimate text to store.
+        """
+        self._write(
+            "UPDATE event_recipes SET estimated_cost = :cost "
+            "WHERE event_id = :id",
+            cost=estimated_cost)
