@@ -114,17 +114,17 @@ def build_edit_event_menu(state):
 
     menu = Menu("Edit Event", {})
     menu.options = {
-        "A": MenuItem("A", "Add Diets",
-                      lambda: build_diets_menu(state, 0, menu)),
-        "B": MenuItem("B", "Remove Diets",
-                      lambda: build_diets_menu(state, 1, menu)),
-        "C": MenuItem("C", "Add Intolerances",
-                      lambda: build_intolerances_menu(state, 0, menu)),
-        "D": MenuItem("D", "Remove Intolerances",
-                      lambda: build_intolerances_menu(state, 1, menu)),
-        "G": MenuItem("E", "Set Attendee Count",
+        "A": MenuItem("A", "Set Attendee Count",
                       lambda: set_event_attendees(state)),
-        "J": MenuItem("F", "Delete Event", lambda: delete_event(state)),
+        "B": MenuItem("B", "Add Diets",
+                      lambda: build_diets_menu(state, 0, menu)),
+        "C": MenuItem("C", "Remove Diets",
+                      lambda: build_diets_menu(state, 1, menu)),
+        "D": MenuItem("D", "Add Intolerances",
+                      lambda: build_intolerances_menu(state, 0, menu)),
+        "E": MenuItem("E", "Remove Intolerances",
+                      lambda: build_intolerances_menu(state, 1, menu)),
+        "F": MenuItem("F", "Delete Event", lambda: delete_event(state)),
         "X": MenuItem("X", "Save Event",
                       lambda: build_single_event_menu(state))
     }
@@ -147,9 +147,7 @@ def build_single_event_menu(state):
                       lambda: event.display()),
         "B": MenuItem("B", "View All Recipes",
                       lambda: view_recipes(state)),
-        "D": MenuItem("C", "Estimate Prices",
-                      lambda: estimate_recipe_cost(state)),
-        "E": MenuItem("D", "Edit Event",
+        "C": MenuItem("C", "Edit Event",
                       lambda: build_edit_event_menu(state)),
         "X": MenuItem("X", "Back to All Events",
                       lambda: build_all_events_menu(state))
@@ -169,7 +167,7 @@ def build_all_events_menu(state):
     """
     all_events_menu = Menu("View and Edit Events", {})
     all_events_menu.options = {
-        "A": MenuItem("A", "List All Events",
+        "A": MenuItem("A", "List All Event Info",
                       lambda: list_all_events(state)),
         "B": MenuItem("B", "Choose Event",
                       lambda: build_event_selector(state, 0)),
@@ -258,14 +256,12 @@ def build_create_event_menu(state):
     menu.options = {
         "A": MenuItem("A", "Set Name",
                       lambda: set_event_name(state)),
-        # "B": MenuItem("B", "Add Existing Ingredients",
-        #               lambda: set_event_ingredients(state, 0)),
+        "B": MenuItem("B", "Set Attendees",
+                      lambda: set_event_attendees(state)),
         "C": MenuItem("C", "Add Diets",
                       lambda: build_diets_menu(state, 0, menu)),
         "D": MenuItem("D", "Add Intolerances",
                       lambda: build_intolerances_menu(state, 0, menu)),
-        "E": MenuItem("E", "Set Attendees",
-                      lambda: set_event_attendees(state)),
         "X": MenuItem("X", "Save Event",
                       lambda: save_event(state))
     }
