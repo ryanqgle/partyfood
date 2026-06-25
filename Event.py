@@ -191,7 +191,7 @@ class Event:
             params["type"] = meal_type
 
         # we arbitrarily decide to only take 1 result for api rate
-        params["number"] = 2
+        params["number"] = 1
 
         params["apiKey"] = state.spoonacular_key
 
