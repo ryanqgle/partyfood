@@ -6,6 +6,7 @@ A quick guide to get **partyfood** running locally.
 
 - API keys for [Spoonacular](https://spoonacular.com/food-api) (recipe data). The free
   Spoonacular tier (150 requests/day) is enough to try the app.
+- API key for Google Gemini (AI-powered cost estimation)
 
 ## 1. Clone and enter the project
 
@@ -41,8 +42,7 @@ Then edit `.env` and replace the placeholder values:
 
 ```
 SPOONACULAR_KEY=your_spoonacular_key
-KROGER_CLIENT_ID=your_kroger_client_id
-KROGER_CLIENT_SECRET=your_kroger_client_secret
+GEMINI_API_KEY=your_gemini_api_key
 ```
 
 Leave the `*_BASE_URL` lines as-is.
@@ -69,5 +69,8 @@ You navigate by typing the letter next to an option, then pressing Enter.
 - **Generate Recipes** — from an event's Edit menu, fetches recipes from
   Spoonacular that match the event's diets and intolerances and prints them by
   category (main course, appetizer, dessert).
+- **Generate Price Estimate** - from an event's menu, fetches recipes
+  associated with the event and uses AI to create a price estimate which
+  corresponds with the amount of expected attendees.
 
 See [Architecture.md](./Architecture.md) for the data flow and database schema.
