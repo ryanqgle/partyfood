@@ -142,7 +142,11 @@ def generate_recipes(state):
 
     for category in recipes:
         for recipe in recipes[category].values():
-            state.current_event.saved_recipes.add(recipe)
+            state.current_event.add_recipe(
+                recipe,
+                category=category,
+                estimated_cost=None
+            )
 
 
 def get_recipe_ingredients(state, recipeid):
