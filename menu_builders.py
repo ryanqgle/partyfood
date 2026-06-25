@@ -202,7 +202,7 @@ def build_event_selector(state, mode):
     Args:
         state: Global state
         mode: Edit event (0) or Generate Recipe (1)
-        or Generate Price Breakdown
+        or Generate Price Estimate (1)
 
     Returns a Menu.
     """

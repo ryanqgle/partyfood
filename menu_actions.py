@@ -162,8 +162,6 @@ def generate_recipes(state):
 
     Args:
         state: Global state
-
-    Returns a main menu
     """
     if not state.spoonacular_key:
         print("Missing Spoonacular API key.")
@@ -226,8 +224,6 @@ def generate_recipes(state):
                 estimated_cost=None
             )
 
-    # return build_main_menu(state)
-
 
 def get_recipe_ingredients(state, recipeid):
     """
@@ -271,8 +267,6 @@ def estimate_recipe_cost(state):
 
     Args:
         state: Global state
-
-    Returns main menu
     """
     if not state_event_error_handler(state):
         return
@@ -334,8 +328,6 @@ def estimate_recipe_cost(state):
         print(response.text)
     except Exception as e:
         print(f"Gemini request failed: {e}")
-
-    # return build_main_menu(state)
 
 
 def api_error_handler(response):
