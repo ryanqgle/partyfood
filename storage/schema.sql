@@ -38,6 +38,6 @@ CREATE TABLE IF NOT EXISTS event_recipes (
     recipe_id TEXT NOT NULL,
     recipe_name TEXT NOT NULL,
     category TEXT,
-    estimated_cost REAL,
+    estimated_cost TEXT,
     ingredients TEXT NOT NULL
 );
