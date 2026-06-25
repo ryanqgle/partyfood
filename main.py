@@ -7,13 +7,23 @@ import sqlalchemy as db
 
 
 def main():
+    print("==== partyfood ====")
+    print("Welcome to partyfood, a tool to make inclusive menu " +
+          "planning easy.")
+    print("Our tool generates menus for your parties and events that" +
+          " take the dietary restrictions of your guests into account.")
+    print("Additionally, you can get price estimates and ranges to " +
+          "effectively plan your budget.")
+    print("You can also manage multiple events, view their " +
+          "information, and edit them as you go.")
+    print("Get started by creating your first event!")
+
     # Establish the database connection on app execution
     # use this engine variable for functions requiring database access
     engine = db.create_engine('sqlite:///food.db')
     init_db(engine)
 
     # Run as normal
-    print("partyfood: coming soon")
     state = AppState(engine)
     state.populate_events()
     run_app(state)
