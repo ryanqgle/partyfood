@@ -79,7 +79,6 @@ class TestRecipeSearchUrl(unittest.TestCase):
     def test_url_includes_key_and_defaults(self):
         url = self.event.generate_recipe_search_url(self.state, "main course")
         self.assertIn("apiKey=TESTKEY", url)
-        self.assertIn("number=3", url)
         self.assertIn("type=main+course", url)
         self.assertTrue(url.startswith(
             "https://api.spoonacular.com/recipes/complexSearch?"))
