@@ -318,7 +318,8 @@ def estimate_recipe_cost(state):
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=prompt,
-            config=types.GenerateContentConfig(  # ensures the response can be parsed as JSON
+            # ensures the response can be parsed as JSON
+            config=types.GenerateContentConfig(
                 response_mime_type="application/json"
             ),
         )
@@ -328,7 +329,8 @@ def estimate_recipe_cost(state):
 
     try:
         estimates = json.loads(response.text)
-    except (json.JSONDecodeError, TypeError):  # if can't parse for whatever reason, print the raw response
+    except (json.JSONDecodeError, TypeError):
+        # if can't parse for whatever reason, print the raw response
         print("Could not parse cost estimate from Gemini:")
         print(response.text)
         return
