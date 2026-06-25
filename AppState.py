@@ -1,4 +1,5 @@
 from Menu import Menu
+from Recipe import Recipe
 from MenuItem import MenuItem
 from Event import Event
 import sqlalchemy as db
@@ -64,6 +65,7 @@ class AppState:
                 self.load_diets(connection, event, event_id)
                 self.load_intolerances(connection, event, event_id)
                 self.load_ingredients(connection, event, event_id)
+                self.load_recipes(connection, event, event_id)
 
                 # attach the engine only after loading, so hydrating the
                 # event above doesn't re-write the rows we just read
@@ -115,3 +117,24 @@ class AppState:
         for row in result:
             ingredient = row[0]
             event.add_ingredient(ingredient)
+
+    def load_recipes(self, connection, event, event_id):
+        result = connection.execute(
+            db.text("""
+                SELECT recipe_id, recipe_name, ingredients
+                FROM event_recipes
+                WHERE event_id = :id
+                """),
+            {"id": event_id}
+        ).fetchall()
+
+        for rid, rname, ingred_str in result:
+            ingreds = [
+                i.strip().lower()
+                for i in ingred_str.split(",")
+                if i.strip()
+            ]
+
+            recipe = Recipe(rname, ingreds, rid)
+            event.saved_recipes.add(recipe)
+
