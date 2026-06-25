@@ -90,14 +90,20 @@ class Event:
 
     # diets
     def add_diet(self, diet):
-        assert isinstance(diet, str)
+        if not isinstance(diet, str):
+            print("Error adding diet. Invalid input.")
+            return
+
         self.diets.add(diet.strip().lower())
         self._write(
             "INSERT INTO event_diets (event_id, diet) VALUES (:id, :diet)",
             diet=diet)
 
     def remove_diet(self, diet):
-        assert isinstance(diet, str)
+        if not isinstance(diet, str):
+            print("Error removing diet. Invalid input.")
+            return
+
         self.diets.remove(diet)
         self._write(
             "DELETE FROM event_diets WHERE event_id = :id AND diet = :diet",
@@ -105,7 +111,9 @@ class Event:
 
     # intolerances
     def add_intolerance(self, intolerance):
-        assert isinstance(intolerance, str)
+        if not isinstance(intolerance, str):
+            print("Error adding intolerance. Invalid input.")
+            return
         self.intolerances.add(intolerance.strip().lower())
         self._write(
             "INSERT INTO event_intolerances (event_id, intolerance) "
@@ -113,7 +121,9 @@ class Event:
             intolerance=intolerance)
 
     def remove_intolerance(self, intolerance):
-        assert isinstance(intolerance, str)
+        if not isinstance(intolerance, str):
+            print("Error removing intolerance. Invalid input.")
+            return
         self.intolerances.remove(intolerance)
         self._write(
             "DELETE FROM event_intolerances "
@@ -122,12 +132,16 @@ class Event:
 
     # ingredients
     def add_ingredient(self, ingredient):
-        assert isinstance(ingredient, str)
+        if not isinstance(ingredient, str):
+            print("Error adding ingredient. Invalid input.")
+            return
         self.ingredients.add(ingredient)
         self._rewrite_ingredients()
 
     def remove_ingredient(self, ingredient):
-        assert isinstance(ingredient, str)
+        if not isinstance(ingredient, str):
+            print("Error ingredient diet. Invalid input.")
+            return
         self.ingredients.remove(ingredient)
         self._rewrite_ingredients()
 
@@ -145,7 +159,11 @@ class Event:
 
     # attendees
     def update_attendees(self, count):
-        assert isinstance(count, int)
+        if not isinstance(count, int) or count < 0:
+            print("Invalid input. Attendee" +
+                  " count should be a positive integer.")
+            return
+
         self.attendee_count = count
         self._write(
             "UPDATE events SET attendee_count = :count WHERE id = :id",
@@ -190,6 +208,9 @@ class Event:
             recipe: Recipe object to be added
             category: The meal type (like appetizer, main dish, dessert)
         """
+        if recipe in self.saved_recipes:
+            return
+
         self.saved_recipes.add(recipe)
         ingredients = ",".join(recipe.ingredients)
 
