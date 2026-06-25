@@ -42,7 +42,6 @@ def run_app(state):
 def init_db(engine):
     """
     inits the database.
-    Intended to be used when the database/tables are empty.
     """
     with open("storage/schema.sql", "r") as f:
         schema = f.read()
