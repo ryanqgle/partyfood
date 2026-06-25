@@ -1,4 +1,5 @@
 from urllib.parse import urlencode
+import json
 import sqlalchemy as db
 
 
@@ -82,6 +83,37 @@ class Event:
             else 'None'
         )
         print(f"Saved Recipes: {saved_recipes_string}")
+
+        # estimated costs live in the db, so only show them for saved events
+        if self.id is None or self.engine is None:
+            return
+
+        with self.engine.connect() as connection:
+            result = connection.execute(
+                db.text(
+                    "SELECT recipe_name, estimated_cost "
+                    "FROM event_recipes "
+                    "WHERE event_id = :id"),
+                {"id": self.id}
+            ).fetchall()
+
+        if not any(cost for _, cost in result):
+            print("\nNo estimated costs yet. Please estimate the cost first.")
+            return
+
+        print("\nEstimated Costs:")
+        for recipe_name, estimated_cost in result:
+            if not estimated_cost:
+                continue
+            try:
+                data = json.loads(estimated_cost)
+                print(f"  {data.get('recipe_name', recipe_name)}: "
+                      f"{data.get('total_cost')}")
+                for ic in data.get("ingredient_costs", []):
+                    print(f"    - {ic.get('ingredient')}: {ic.get('cost')}")
+            except (json.JSONDecodeError, TypeError):
+                # if get() doesn't work, fallback to printing the raw string
+                print(f"  {recipe_name}: {estimated_cost}")
 
     def set_name(self, name):
         self.name = name
@@ -244,3 +276,16 @@ class Event:
                     "ingredients": ingredients
                 }
             )
+
+    def set_recipe_cost(self, recipe_id, estimated_cost):
+        """
+        Stores a cost estimate for one specific recipe of this event.
+
+        Args:
+            recipe_id: ID of the recipe whose cost to update.
+            estimated_cost: The cost estimate (JSON string) to store.
+        """
+        self._write(
+            "UPDATE event_recipes SET estimated_cost = :cost "
+            "WHERE event_id = :id AND recipe_id = :rid",
+            cost=estimated_cost, rid=str(recipe_id))

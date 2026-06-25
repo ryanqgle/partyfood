@@ -285,6 +285,7 @@ def estimate_recipe_cost(state):
     recipe_text = ""
     for recipe in recipes:
         recipe_text += f"""
+        Recipe ID: {recipe.id}
         Recipe: {recipe.name}
         Ingredients: {', '.join(recipe.ingredients)}
         """
@@ -292,42 +293,64 @@ def estimate_recipe_cost(state):
     client = genai.Client(api_key=state.gemini_key)
 
     prompt = f"""
-    Estimate the grocery cost for preparing this recipe for {attendees}
-    people in the United states.
-    Assume average supermarket prices
+    Estimate the grocery cost for preparing these recipes for {attendees}
+    people in the United States. Assume average supermarket prices.
 
     Recipes:
     {recipe_text}
 
-    Requirements:
-    - Estimate the cost of each ingredient.
-    - Show the subtotal for each recipe.
-    - Show a reasonable price range for each recipe.
-    - Show a grand total range for all recipes combined.
-    - Do not explain your reasoning.
-    - Do not include introductions or conclusions.
-    - Format exactly like:
-
-    Recipe: <recipe name>
-    Ingredient costs:
-    - ingredient: $x-$y
-    - ingredient: $x-$y
-    Recipe total: $x-$y
-
-    Recipe: <recipe name>
-    ...
-
-    Grand Total: $x-$y
+    Return ONLY valid JSON: an array with one object per recipe, using the
+    Recipe ID given above. Use this exact shape:
+    [
+      {{
+        "recipe_id": <the Recipe ID>,
+        "recipe_name": "<recipe name>",
+        "ingredient_costs": [
+          {{"ingredient": "<ingredient name>", "cost": "$x-$y"}}
+        ],
+        "total_cost": "$x-$y"
+      }}
+    ]
+    Do not include any text, explanation, or markdown outside the JSON.
     """
 
     try:
         response = client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=prompt
-                )
-        print(response.text)
+            model="gemini-2.5-flash",
+            contents=prompt,
+            # ensures the response can be parsed as JSON
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json"
+            ),
+        )
     except Exception as e:
         print(f"Gemini request failed: {e}")
+        return
+
+    try:
+        estimates = json.loads(response.text)
+    except (json.JSONDecodeError, TypeError):
+        # if can't parse for whatever reason, print the raw response
+        print("Could not parse cost estimate from Gemini:")
+        print(response.text)
+        return
+
+    print("==== Estimated Costs ====")
+    for item in estimates:
+        recipe_id = item.get("recipe_id")
+
+        # store this recipe's cost (as JSON) in its own estimated_cost cell
+        cost_json = json.dumps({
+            "recipe_name": item.get("recipe_name"),
+            "ingredient_costs": item.get("ingredient_costs", []),
+            "total_cost": item.get("total_cost"),
+        })
+        state.current_event.set_recipe_cost(recipe_id, cost_json)
+
+        # print a readable breakdown
+        print(f"\n{item.get('recipe_name')} (total: {item.get('total_cost')})")
+        for ic in item.get("ingredient_costs", []):
+            print(f"  - {ic.get('ingredient')}: {ic.get('cost')}")
 
 
 def api_error_handler(response):
