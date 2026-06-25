@@ -215,7 +215,7 @@ def estimate_recipe_cost(state):
 
     if not state.gemini_key:
         print("Missing Gemini API key.")
-        return    
+        return
 
     recipe_text = ""
     for recipe in recipes:
@@ -254,7 +254,7 @@ def estimate_recipe_cost(state):
 
     Grand Total: $x-$y
     """
-    
+
     try:
         response = client.models.generate_content(
                 model="gemini-2.5-flash",
@@ -270,7 +270,7 @@ def api_error_handler(response):
     Checks if an API call was successful. If not,
     prints error.
 
-    Returns false if there was an error, 
+    Returns false if there was an error,
     returns true if there was no error.
 
     Args:
@@ -283,6 +283,7 @@ def api_error_handler(response):
     print(f"Error Code: {response.status_code}")
     print(f"Error Message: {response.reason}")
     return False
+
 
 def state_event_error_handler(state):
     """
