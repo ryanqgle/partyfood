@@ -151,7 +151,8 @@ def build_single_event_menu(state):
     event_menu_dict = {
         "A": MenuItem("A", "List Info",
                       lambda: event.display()),
-        "B": MenuItem("B", "View All Recipes", None),  # TODO
+        "B": MenuItem("B", "View All Recipes",
+                      lambda: view_recipes(state)),  # TODO
         # "C": MenuItem("C", "List Ingredients", None),  # could be later
         # "D": MenuItem("D", "View One Recipe", None),  # could be later
         "E": MenuItem("E", "Edit Event",
@@ -191,8 +192,9 @@ def build_main_menu(state):
                       lambda: build_all_events_menu(state)),
         "B": MenuItem("B", "Create New Event",
                       lambda: build_create_event_menu(state)),
-        "C": MenuItem("C", "Generate Recipes", None)  # TODO also should prompt
-                                                      # with event selector
+        "C": MenuItem("C", "Generate Recipes", None),
+        # TODO: prompt C with event selector
+        "X": MenuItem("X", "Quit App", lambda: exit())
     }
     return Menu("Main", main_menu_dict)
 

@@ -1,6 +1,4 @@
 from urllib.parse import urlencode
-
-
 import sqlalchemy as db
 
 
@@ -27,6 +25,7 @@ class Event:
         """
         if self.id is None or self.engine is None:
             return
+
         with self.engine.begin() as conn:  # begin() commits on success
             conn.execute(db.text(sql), {"id": self.id, **params})
 
@@ -53,7 +52,7 @@ class Event:
                 )
 
     def display(self):
-        print(self.name)
+        print("~ " + self.name + " ~")
         print(f"Number of Attendees: {self.attendee_count}")
 
         ingredients_string = (
@@ -78,7 +77,7 @@ class Event:
         print(f"Intolerances: {intolerances_string}")
 
         saved_recipes_string = (
-            ', '.join(self.saved_recipes)
+            ', '.join(recipe.name for recipe in self.saved_recipes)
             if self.saved_recipes
             else 'None'
         )
@@ -164,10 +163,47 @@ class Event:
         if meal_type:
             params["type"] = meal_type
 
-        params["number"] = 3  # we arbitrarily decide to only take 3 results
+        # we arbitrarily decide to only take 1 result for api rate
+        params["number"] = 1
+
         params["apiKey"] = state.spoonacular_key
 
         url = ("https://api.spoonacular.com/recipes/complexSearch?" +
                urlencode(params))
 
         return url
+
+    def add_recipe(self, recipe, category=None, estimated_cost=None):
+        self.saved_recipes.add(recipe)
+        ingredients = ",".join(recipe.ingredients)
+
+        if self.id is None or self.engine is None:
+            return
+
+        with self.engine.begin() as conn:
+            conn.execute(
+                db.text("""
+                    INSERT INTO event_recipes
+                        (event_id,
+                        recipe_id,
+                        recipe_name,
+                        category,
+                        estimated_cost,
+                        ingredients)
+                    VALUES
+                        (:event_id,
+                        :recipe_id,
+                        :recipe_name,
+                        :category,
+                        :estimated_cost,
+                        :ingredients)
+                    """),
+                {
+                    "event_id": str(self.id),
+                    "recipe_id": str(recipe.id),
+                    "recipe_name": recipe.name,
+                    "category": category,
+                    "estimated_cost": estimated_cost,
+                    "ingredients": ingredients
+                }
+            )
