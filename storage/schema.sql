@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS event_recipes (
     event_id INTEGER REFERENCES events(id),
     recipe_id TEXT NOT NULL,
     recipe_name TEXT NOT NULL,
-    category TEXT NOT NULL,
-    estimated_cost REAL
+    category TEXT,
+    estimated_cost REAL,
+    ingredients TEXT NOT NULL
 );
