@@ -15,6 +15,9 @@ def set_event_name(state):
     Args:
         state: Global state
     """
+    if not state_event_error_handler(state):
+        return
+
     name = input("Event Name: ")
     state.current_event.set_name(name)
 
@@ -26,11 +29,15 @@ def set_event_attendees(state):
     Args:
         state: Global state
     """
-    count = int(input("Number of attendees: "))
-    if not isinstance(count, int):
-        print("Invalid input. Type in a number.")
+    if not state_event_error_handler(state):
+        return
 
-    state.current_event.update_attendees(count)
+    try:
+        count = int(input("Number of attendees: "))
+        state.current_event.update_attendees(count)
+    except ValueError:
+        print("Invalid input. Type a whole number.")
+        return
 
 
 def set_event_ingredients(state, mode):
@@ -39,6 +46,9 @@ def set_event_ingredients(state, mode):
         state: Global state
         mode: Add (0) or Remove (1)
     """
+    if not state_event_error_handler(state):
+        return
+
     ing_raw = input("Available ingredients (comma separated): ")
     state.current_event.modify_ingredients(ing_raw, mode)
 
@@ -50,16 +60,14 @@ def view_recipes(state):
     Args:
         state: Global state
     """
+    if not state_event_error_handler(state):
+        return
+
     event = state.current_event
 
     if not event.saved_recipes:
         print("No saved recipes")
         return
-
-    # I think we will eventually need to make a class for recipes
-    # and each recipe will have it's own display function
-    # then we can loop through displays recipes here and display
-    # FOR NOW, not a priority!!
 
     for recipe in event.saved_recipes:
         recipe.display()
@@ -73,12 +81,13 @@ def list_all_events(state):
     Args:
         state: Global state
     """
-    print("==== ALL EVENTS ====")
-    for event in state.events.values():
-        event.display()
-        print("")
-
-    return
+    if not state.events:
+        print("No events found.")
+    else:
+        print("==== ALL EVENTS ====")
+        for event in state.events.values():
+            event.display()
+            print("")
 
 
 def generate_recipes(state):
@@ -89,22 +98,22 @@ def generate_recipes(state):
     Args:
         state: Global state
     """
-    event = state.current_event
-    if event is None:
-        print("No event selected.")
+    if not state.spoonacular_key:
+        print("Missing Spoonacular API key.")
         return
 
-    # GET https://api.spoonacular.com/recipes/complexSearch/
+    if not state_event_error_handler(state):
+        return
 
-    # output should be a print statement of the recipes
+    event = state.current_event
 
     main_url = event.generate_recipe_search_url(state, "main course")
-    # appetizer_url = event.generate_recipe_search_url(state, "appetizer")
-    # dessert_url = event.generate_recipe_search_url(state, "dessert")
+    appetizer_url = event.generate_recipe_search_url(state, "appetizer")
+    dessert_url = event.generate_recipe_search_url(state, "dessert")
     categories = {
         "main course": main_url,
-        # "appetizer": appetizer_url,
-        # "dessert": dessert_url,
+        "appetizer": appetizer_url,
+        "dessert": dessert_url,
     }
 
     recipes = {
@@ -114,32 +123,33 @@ def generate_recipes(state):
     }
 
     for category, url in categories.items():
-        response = requests.get(url)
-        if response.status_code != 200:
-            print(f"Failed to get recipes")
-            print("Status code: " + str(response.status_code))
-            return
+        try:
+            response = requests.get(url, timeout=25)
+        except requests.exceptions.RequestException as e:
+            print(f"Request failed: {e}")
+            continue
 
-        data = response.json()
-        for recipe in data["results"]:
-            rid = recipe["id"]
-            ingreds = get_recipe_ingredients(state, rid)
-            recipes[category][rid] = Recipe(recipe["title"], ingreds, rid)
+        if api_error_handler(response):  # returns true if we're chilling
+            data = response.json()
+            for recipe in data.get("results", []):
+                rid = recipe["id"]
+                ingreds = get_recipe_ingredients(state, rid)
+                recipes[category][rid] = Recipe(recipe["title"], ingreds, rid)
 
-    print("!!! MAIN COURSES !!!")
+    print("\n!!! MAIN COURSES !!!")
     for recipe in recipes["main course"].values():
         recipe.display()
     print("")
 
-    # print("!!! APPETIZERS !!!")
-    # for recipe in recipes["appetizer"].values():
-    #     recipe.display()
-    # print("")
+    print("!!! APPETIZERS !!!")
+    for recipe in recipes["appetizer"].values():
+        recipe.display()
+    print("")
 
-    # print("!!! DESSERTS !!!")
-    # for recipe in recipes["dessert"].values():
-    #     recipe.display()
-    # print("")
+    print("!!! DESSERTS !!!")
+    for recipe in recipes["dessert"].values():
+        recipe.display()
+    print("")
 
     for category in recipes:
         for recipe in recipes[category].values():
@@ -159,24 +169,30 @@ def get_recipe_ingredients(state, recipeid):
         state: Global state
         recipeid: The ID associated with a recipe.
     """
+    if not state.spoonacular_key:
+        print("Missing Spoonacular API key.")
+        return []
+
     url = (f"https://api.spoonacular.com/recipes/" +
            f"{recipeid}/ingredientWidget.json?"
            + f"apiKey={state.spoonacular_key}")
 
-    response = requests.get(url)
-
-    if response.status_code != 200:
-        print(f"Failed for recipe {recipeid}")
-        print("Status code: " + str(response.status_code))
+    try:
+        response = requests.get(url, timeout=25)
+    except requests.exceptions.RequestException as e:
+        print(f"Request failed: {e}")
         return []
 
-    data = response.json()
-    ingredients = []
+    if api_error_handler(response):
+        data = response.json()
+        ingredients = []
 
-    for ingredient in data["ingredients"]:
-        ingredients.append(ingredient["name"])
+        for ingredient in data.get("ingredients", []):
+            ingredients.append(ingredient["name"])
 
-    return ingredients
+        return ingredients
+    else:
+        return []
 
 
 def estimate_recipe_cost(state):
@@ -187,10 +203,21 @@ def estimate_recipe_cost(state):
     Args:
         state: Global state
     """
+    if not state_event_error_handler(state):
+        return
+
     attendees = state.current_event.attendee_count
     recipes = state.current_event.saved_recipes
-    recipe_text = ""
 
+    if not recipes:
+        print("No recipes saved for this event.")
+        return
+
+    if not state.gemini_key:
+        print("Missing Gemini API key.")
+        return    
+
+    recipe_text = ""
     for recipe in recipes:
         recipe_text += f"""
         Recipe: {recipe.name}
@@ -227,10 +254,45 @@ def estimate_recipe_cost(state):
 
     Grand Total: $x-$y
     """
-
-    response = client.models.generate_content(
+    
+    try:
+        response = client.models.generate_content(
                 model="gemini-2.5-flash",
                 contents=prompt
                 )
+        print(response.text)
+    except Exception as e:
+        print(f"Gemini request failed: {e}")
 
-    print(response.text)
+
+def api_error_handler(response):
+    """
+    Checks if an API call was successful. If not,
+    prints error.
+
+    Returns false if there was an error, 
+    returns true if there was no error.
+
+    Args:
+        response: the response of the API call
+    """
+    if response.ok:
+        return True
+
+    print("There was an error with the API request.")
+    print(f"Error Code: {response.status_code}")
+    print(f"Error Message: {response.reason}")
+    return False
+
+def state_event_error_handler(state):
+    """
+    Checks if there is currently a selected event.
+    If so, returns true. Otherwise, returns false.
+
+    Args:
+        state: Global state
+    """
+    if not state.current_event:
+        print("No event selected.")
+        return False
+    return True
