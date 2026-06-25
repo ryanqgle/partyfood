@@ -120,7 +120,7 @@ The local SQLite database stores **events** and their associated data.
 | `recipe_id` | TEXT | Spoonacular recipe ID |
 | `recipe_name` | TEXT | Display name |
 | `category` | TEXT | e.g. `"main"`, `"dessert"`, `"drink"` |
-| `estimated_cost` | REAL | AI-generated grocery cost estimate |
+| `estimated_cost` | TEXT | AI-generated grocery cost estimate |
 | `ingredients` | TEXT | List of ingredients |
 
 
